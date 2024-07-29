@@ -18,7 +18,7 @@ jobs:
         run: |
           paths=(".")
           for item in "${paths[@]}"; do
-            for script in $(find "${item}" -type f -name "*.sh" | grep -v "wait-for"); do
+            for script in $(find "${item}" -type f -name "*.sh" | grep -v "/.git/"); do
               echo "## shellcheck: ${script}"
               shellcheck '--external-sources' "$script" || touch error
             done
