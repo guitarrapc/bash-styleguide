@@ -267,11 +267,11 @@ bash ./foo.sh --foo "hello world" --bar "$bar"
 . ./foo.sh
 
 # Do not give execute permission with chmod +x and execute
-chmod +x foo.sh
+chmod +x ./foo.sh
 ./foo.sh
 
 # If the bar variable contains spaces or is an empty string, argument parsing may go wrong
-bash foo.sh --foo hello world --bar $bar
+bash ./foo.sh --foo hello world --bar $bar
 ```
 
 ## Common Function Scripts
@@ -469,7 +469,7 @@ Making scripts executable in the local environment facilitates script developmen
 
 ```shell
 # Pass AWS credentials by specifying --aws-args during local execution
-$ my_script.sh --aws-args "--profile aws-profile --region ap-northeast-1" --dry-run true
+$ bash ./my_script.sh --aws-args "--profile aws-profile --region ap-northeast-1" --dry-run true
 ```
 
 ```shell

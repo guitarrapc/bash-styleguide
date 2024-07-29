@@ -268,11 +268,11 @@ bash ./foo.sh --foo "hello world" --bar "$bar"
 . ./foo.sh
 
 # chmod +xで実行権限を与えて実行もだめ
-chmod +x foo.sh
+chmod +x ./foo.sh
 ./foo.sh
 
 # bar変数にスペースが含まれたり、空文字列だと引数解釈がおかしくなる可能性がある
-bash foo.sh --foo hello world --bar $bar
+bash ./foo.sh --foo hello world --bar $bar
 ```
 
 ## 共通関数スクリプト (Common Function Scripts)
@@ -469,7 +469,7 @@ az webapp up ...
 
 ```shell
 # ローカル実行時に--aws-argsを指定することでAWS認証情報を渡す
-$ my_script.sh --aws-args "--profile aws-profile --region ap-northeast-1" --dry-run true
+$ bash ./my_script.sh --aws-args "--profile aws-profile --region ap-northeast-1" --dry-run true
 ```
 
 ```shell
