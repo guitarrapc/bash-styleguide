@@ -1,0 +1,36 @@
+#!/bin/bash
+# Common functions.
+#
+# Write following code to your script to use this functions
+# ```
+# shellcheck disable=SC1091
+#. "$(dirname "${BASH_SOURCE[0]}")/_functions"
+# ```
+
+# much readable info level log
+function common::print {
+  echo "INFO(${FUNCNAME[1]:-unknown}): $*"
+}
+# much readable error level log, stderr output
+function common::error {
+  echo "ERROR(${FUNCNAME[1]:-unknown}): $*" >&2
+}
+# much readable debug level log, stdout output
+function common::debug {
+  if [[ "${_DEBUG:=false}" == "true" ]]; then
+    echo "DEBG(${FUNCNAME[1]:-unknown}): $*"
+  fi
+}
+
+# enable debug mnode
+function common::debug_mode {
+  if [[ "${_DEBUG:=false}" == "true" ]]; then
+    set -x
+  fi
+}
+
+# mask input
+function common::mask_secret {
+    local secret=$*
+    echo "${secret//?/*}"
+}
