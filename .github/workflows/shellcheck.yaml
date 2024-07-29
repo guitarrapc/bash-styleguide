@@ -1,0 +1,26 @@
+name: Shellcheck
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/*.sh"
+  workflow_dispatch:
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      # `reviewdog/action-shellcheck@v1` can't handle post github-pr-review suggestion. Let's use native shellcheck and error if found any.
+      - name: shellcheck
+        run: |
+          paths=(".")
+          for item in "${paths[@]}"; do
+            for script in $(find "${item}" -type f -name "*.sh" | grep -v "wait-for"); do
+              echo "## shellcheck: ${script}"
+              shellcheck '--external-sources' "$script" || touch error
+            done
+          done
+          test ! -e error
