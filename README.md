@@ -6,8 +6,64 @@ The style guide is not absolute; break it if necessary. The aim of this style gu
 
 When in doubt, prioritize consistency. By using a single style consistently throughout the codebase, you can focus on other (more important) issues. Consistency also allows for automation. In many cases, the rule of "maintain consistency" means "choose one option and stop worrying about it." The potential value of allowing flexibility on these points is outweighed by the cost of people debating them. However, there are limits to consistency. Consistency is a good factor for making decisions when there is no clear technical argument or long-term direction. On the other hand, consistency should not be used to justify continuing with an outdated style when there are clear advantages to a new one.
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+# Table of Contents
+
+- [Introduction](#introduction)
+  - [Automation Support](#automation-support)
+  - [How the Style Guide Changes](#how-the-style-guide-changes)
+- [Background](#background)
+  - [Which Shell to Use](#which-shell-to-use)
+  - [When to Use Shell](#when-to-use-shell)
+  - [Shell Execution Environment](#shell-execution-environment)
+- [Shell Files and Interpreter Invocation](#shell-files-and-interpreter-invocation)
+  - [File Extensions](#file-extensions)
+  - [SUID/SGID](#suidsgid)
+- [Environment](#environment)
+  - [Script Invocation](#script-invocation)
+  - [Common Function Scripts](#common-function-scripts)
+  - [Script Argument Control](#script-argument-control)
+  - [Debug and Dry-run Mode](#debug-and-dry-run-mode)
+  - [Make It Executable Locally](#make-it-executable-locally)
+  - [STDOUT vs STDERR](#stdout-vs-stderr)
+- [Naming Conventions](#naming-conventions)
+  - [Function Names](#function-names)
+  - [Variable Names](#variable-names)
+- [Comments](#comments)
+  - [File Header](#file-header)
+  - [Implementation Comments](#implementation-comments)
+  - [TODO コメント (TODO Comments)](#todo-%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88-todo-comments)
+- [Formatting](#formatting)
+  - [Tabs and Spaces](#tabs-and-spaces)
+  - [Line Length and Long Strings](#line-length-and-long-strings)
+  - [Pipelines](#pipelines)
+  - [Loops](#loops)
+  - [Case statement](#case-statement)
+  - [Variable Expansion](#variable-expansion)
+  - [Quoting](#quoting)
+  - [Function Declaration](#function-declaration)
+- [Features and Bugs](#features-and-bugs)
+  - [Use ShellCheck](#use-shellcheck)
+  - [Command Substitution](#command-substitution)
+  - [Test Expression](#test-expression)
+  - [Testing Strings](#testing-strings)
+  - [Wildcard Expansion of Filenames](#wildcard-expansion-of-filenames)
+  - [Evalの禁止 (Eval is Evil)](#eval%E3%81%AE%E7%A6%81%E6%AD%A2-eval-is-evil)
+  - [配列 (Arrays)](#%E9%85%8D%E5%88%97-arrays)
+  - [Pipes to While](#pipes-to-while)
+  - [For Loops](#for-loops)
+  - [Arithmetic](#arithmetic)
+- [Calling Commands](#calling-commands)
+  - [Checking Return Values](#checking-return-values)
+  - [Error Handling](#error-handling)
+  - [Builtin Commands vs. External Commands](#builtin-commands-vs-external-commands)
+- [Script Stabilization](#script-stabilization)
+  - [Writing Rerunnable Scripts](#writing-rerunnable-scripts)
+  - [Check State Before Changing](#check-state-before-changing)
+  - [Safely Creating Temporary Files](#safely-creating-temporary-files)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Introduction
 
