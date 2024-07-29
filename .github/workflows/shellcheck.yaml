@@ -3,8 +3,6 @@ name: Shellcheck
 on:
   pull_request:
     branches: [main]
-    paths:
-      - "**/*.sh"
   workflow_dispatch:
 
 jobs:
