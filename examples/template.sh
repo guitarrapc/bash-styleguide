@@ -30,7 +30,7 @@ while [[ $# -gt 0 ]]; do
     --aws-args) _AWS_ARGS=$2; shift 2; ;;
     --debug) _DEBUG=$2; shift 2; ;;
     --dry-run) _DRYRUN=$2; shift 2; ;;
-    --help) usage; exit;;
+    --help) help; exit;;
     *) shift ;;
   esac
 done
