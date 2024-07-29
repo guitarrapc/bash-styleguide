@@ -1,88 +1,34 @@
+[English](README.md) | [日本語](README.ja.md)
+
 # bash-styleguide
 
-スタイルガイドは絶対ではありません、必要なら壊してください。本スタイルガイドが目指すのは、Bashスクリプトを書く心理的障壁になるのを避けつつ、Bashスクリプトを書いていて悩んで答えがでない状況を減らすことです。Bashスクリプトは繊細でメンテナンスが難しく嫌いになりやすいことが多いでしょう。それでもBashスクリプトを書くことは必要なので、このスタイルガイドを用意しました。
+The style guide is not absolute; break it if necessary. The aim of this style guide is to reduce the psychological barriers to writing Bash scripts and to provide answers to common problems encountered when writing Bash scripts. Bash scripts are often delicate, difficult to maintain, and can easily become disliked. However, writing Bash scripts is sometimes necessary, so this style guide has been prepared.
 
-迷ったときは、一貫性を最優先に決定してください。コードベース全体で1つのスタイルを一貫して使用することで、他の (より重要な) 問題に集中できます。一貫性があれば、自動化も可能になります。多くの場合、「一貫性を保つ」というルールは、「1つだけ選択して、それについて心配するのをやめる」ということになります。これらの点について柔軟性を許可する潜在的な価値は、人々がそれについて議論するコストを上回ります。ただし、一貫性には限界があります。一貫性は、明確な技術的議論や長期的な方向性がない場合に良い決着をつける要因となります。一方で、一貫性をもって、新しいスタイルの利点や、コードベースが古いスタイルのまま物事を進める正当化理由に用いられるべきではありません。
+When in doubt, prioritize consistency. By using a single style consistently throughout the codebase, you can focus on other (more important) issues. Consistency also allows for automation. In many cases, the rule of "maintain consistency" means "choose one option and stop worrying about it." The potential value of allowing flexibility on these points is outweighed by the cost of people debating them. However, there are limits to consistency. Consistency is a good factor for making decisions when there is no clear technical argument or long-term direction. On the other hand, consistency should not be used to justify continuing with an outdated style when there are clear advantages to a new one.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-# Table of Contents
+<!-- START doctoc -->
+<!-- END doctoc -->
 
-- [はじめに (Introduction)](#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB-introduction)
-  - [自動化支援 (Automation Support)](#%E8%87%AA%E5%8B%95%E5%8C%96%E6%94%AF%E6%8F%B4-automation-support)
-  - [スタイルガイドでどう変わる (How the Style Guide Changes)](#%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%82%AC%E3%82%A4%E3%83%89%E3%81%A7%E3%81%A9%E3%81%86%E5%A4%89%E3%82%8F%E3%82%8B-how-the-style-guide-changes)
-- [背景 (Background)](#%E8%83%8C%E6%99%AF-background)
-  - [どのシェルを使うか (Which Shell to Use)](#%E3%81%A9%E3%81%AE%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%92%E4%BD%BF%E3%81%86%E3%81%8B-which-shell-to-use)
-  - [いつシェルを使うか (When to use Shell)](#%E3%81%84%E3%81%A4%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%92%E4%BD%BF%E3%81%86%E3%81%8B-when-to-use-shell)
-  - [シェルの実行環境 (Shell Execution Environment)](#%E3%82%B7%E3%82%A7%E3%83%AB%E3%81%AE%E5%AE%9F%E8%A1%8C%E7%92%B0%E5%A2%83-shell-execution-environment)
-- [シェルファイルとインタプリタ呼出 (Shell Files and Interpreter Invocation)](#%E3%82%B7%E3%82%A7%E3%83%AB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%A8%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%97%E3%83%AA%E3%82%BF%E5%91%BC%E5%87%BA-shell-files-and-interpreter-invocation)
-  - [ファイル拡張子 (File Extensions)](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%8B%A1%E5%BC%B5%E5%AD%90-file-extensions)
-  - [SUID/SGID](#suidsgid)
-- [環境 (Environment)](#%E7%92%B0%E5%A2%83-environment)
-  - [スクリプトの呼び出し (Script Invocation)](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AE%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%97-script-invocation)
-  - [共通関数スクリプト (Common Function Scripts)](#%E5%85%B1%E9%80%9A%E9%96%A2%E6%95%B0%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88-common-function-scripts)
-  - [スクリプトの引数制御 (Script Argument Control)](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AE%E5%BC%95%E6%95%B0%E5%88%B6%E5%BE%A1-script-argument-control)
-  - [デバッグモードとドライランモード (Debug and Dry-run Mode)](#%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E3%83%A2%E3%83%BC%E3%83%89%E3%81%A8%E3%83%89%E3%83%A9%E3%82%A4%E3%83%A9%E3%83%B3%E3%83%A2%E3%83%BC%E3%83%89-debug-and-dry-run-mode)
-  - [ローカルで実行可能にする (Make It Executable Locally)](#%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E5%AE%9F%E8%A1%8C%E5%8F%AF%E8%83%BD%E3%81%AB%E3%81%99%E3%82%8B-make-it-executable-locally)
-  - [STDOUT vs STDERR](#stdout-vs-stderr)
-- [命名規則 (Naming Conventions)](#%E5%91%BD%E5%90%8D%E8%A6%8F%E5%89%87-naming-conventions)
-  - [関数名 (Function Names)](#%E9%96%A2%E6%95%B0%E5%90%8D-function-names)
-  - [変数名 (Variable Names)](#%E5%A4%89%E6%95%B0%E5%90%8D-variable-names)
-- [コメント (Comments)](#%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88-comments)
-  - [ファイルヘッダー (File Header)](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%83%98%E3%83%83%E3%83%80%E3%83%BC-file-header)
-  - [コメントの実装 (Implementation Comments)](#%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88%E3%81%AE%E5%AE%9F%E8%A3%85-implementation-comments)
-  - [TODO コメント (TODO Comments)](#todo-%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88-todo-comments)
-- [フォーマット (Formatting)](#%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88-formatting)
-  - [タブとスペース (Tabs and Spaces)](#%E3%82%BF%E3%83%96%E3%81%A8%E3%82%B9%E3%83%9A%E3%83%BC%E3%82%B9-tabs-and-spaces)
-  - [行の長さと長い文字列 (Line Length and Long Strings)](#%E8%A1%8C%E3%81%AE%E9%95%B7%E3%81%95%E3%81%A8%E9%95%B7%E3%81%84%E6%96%87%E5%AD%97%E5%88%97-line-length-and-long-strings)
-  - [パイプライン (Pipelines)](#%E3%83%91%E3%82%A4%E3%83%97%E3%83%A9%E3%82%A4%E3%83%B3-pipelines)
-  - [ループ (Loops)](#%E3%83%AB%E3%83%BC%E3%83%97-loops)
-  - [case文 (Case statement)](#case%E6%96%87-case-statement)
-  - [変数展開 (Variable expansion)](#%E5%A4%89%E6%95%B0%E5%B1%95%E9%96%8B-variable-expansion)
-  - [クォート (Quoting)](#%E3%82%AF%E3%82%A9%E3%83%BC%E3%83%88-quoting)
-  - [関数の宣言 (Function Declaration)](#%E9%96%A2%E6%95%B0%E3%81%AE%E5%AE%A3%E8%A8%80-function-declaration)
-- [機能とバグ (Features and Bugs)](#%E6%A9%9F%E8%83%BD%E3%81%A8%E3%83%90%E3%82%B0-features-and-bugs)
-  - [ShellCheckを使う (Use ShellCheck)](#shellcheck%E3%82%92%E4%BD%BF%E3%81%86-use-shellcheck)
-  - [コマンド置換 (Command Substitution)](#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E7%BD%AE%E6%8F%9B-command-substitution)
-  - [Test構文 (Test Expression)](#test%E6%A7%8B%E6%96%87-test-expression)
-  - [文字列のテスト (Testing Strings)](#%E6%96%87%E5%AD%97%E5%88%97%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88-testing-strings)
-  - [ファイル名のワイルドカード展開 (Wildcard Expansion of Filenames)](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D%E3%81%AE%E3%83%AF%E3%82%A4%E3%83%AB%E3%83%89%E3%82%AB%E3%83%BC%E3%83%89%E5%B1%95%E9%96%8B-wildcard-expansion-of-filenames)
-  - [Evalの禁止 (Eval is Evil)](#eval%E3%81%AE%E7%A6%81%E6%AD%A2-eval-is-evil)
-  - [配列 (Arrays)](#%E9%85%8D%E5%88%97-arrays)
-  - [whileへのパイプ (Pipes to While)](#while%E3%81%B8%E3%81%AE%E3%83%91%E3%82%A4%E3%83%97-pipes-to-while)
-  - [forループ (For Loops)](#for%E3%83%AB%E3%83%BC%E3%83%97-for-loops)
-  - [算術演算 (Arithmetic)](#%E7%AE%97%E8%A1%93%E6%BC%94%E7%AE%97-arithmetic)
-- [コマンド呼び出し (Calling Commands)](#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%97-calling-commands)
-  - [返り値判定 (Checking Return Values)](#%E8%BF%94%E3%82%8A%E5%80%A4%E5%88%A4%E5%AE%9A-checking-return-values)
-  - [エラー処理 (Error Handling)](#%E3%82%A8%E3%83%A9%E3%83%BC%E5%87%A6%E7%90%86-error-handling)
-  - [ビルトインコマンド vs 外部コマンド (Builtin Commands vs. External Commands)](#%E3%83%93%E3%83%AB%E3%83%88%E3%82%A4%E3%83%B3%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89-vs-%E5%A4%96%E9%83%A8%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89-builtin-commands-vs-external-commands)
-- [スクリプトの安定化 (Script Stabilization)](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AE%E5%AE%89%E5%AE%9A%E5%8C%96-script-stabilization)
-  - [再実行可能なスクリプトを書く (Writing Rerunnable Scripts)](#%E5%86%8D%E5%AE%9F%E8%A1%8C%E5%8F%AF%E8%83%BD%E3%81%AA%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%82%92%E6%9B%B8%E3%81%8F-writing-rerunnable-scripts)
-  - [変更前に状態の確認を行う (Check State Before Changing)](#%E5%A4%89%E6%9B%B4%E5%89%8D%E3%81%AB%E7%8A%B6%E6%85%8B%E3%81%AE%E7%A2%BA%E8%AA%8D%E3%82%92%E8%A1%8C%E3%81%86-check-state-before-changing)
-  - [一時ファイルの安全な作成 (Safely Creating Temporary Files)](#%E4%B8%80%E6%99%82%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%AE%89%E5%85%A8%E3%81%AA%E4%BD%9C%E6%88%90-safely-creating-temporary-files)
+# Introduction
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+This style guide provides guidelines for writing Bash scripts. It is based on the [Google Shell Style Guide (rev 2.03)](https://google.github.io/styleguide/shellguide.html) and [icy/bash-coding-style](https://github.com/icy/bash-coding-style), with some custom rules. Items that are intentionally made custom are explicitly marked as `(custom)`.
 
-# はじめに (Introduction)
+The following symbols are used:
 
-Bashスクリプトのスタイルガイドを示します。このスタイルガイドは、[Googleスタイルガイド (rev 2.03)](https://google.github.io/styleguide/shellguide.html)、[icy/bash-coding-style](https://github.com/icy/bash-coding-style)をベースに、一部独自規約で構成されています。意図的に独自規約にした項目は`(独自)`と明示しています。
-
-用いる表示は次の通りです。
-
-| 表記 | 意味 |
+| Symbol | Meaning |
 | --- | --- |
-| ✔️ DO | 推奨します。 |
-| ❌ DO NOT | 推奨しません。避ける努力をしてください。 |
-| ⚠️ CONSIDER | 可能か検討してください。状況によっては適用することがあります。 |
+| ✔️ DO | Recommended. |
+| ❌ DO NOT | Not recommended. Make an effort to avoid it. |
+| ⚠️ CONSIDER | Consider if possible. It may be applied depending on the situation. |
 
-## 自動化支援 (Automation Support)
+## Automation Support
 
-スタイルガイドを守るにあたり、次の自動化が支援します。自動化支援によって注意されたことを守ることでスタイルガイドのほぼすべてが満たされます。(スクリプト構造は担保されません)
+To help adhere to the style guide, the following automation support is provided. By following the recommendations from automation support, almost all aspects of the style guide will be met (script structure is not guaranteed).
 
-* PRで`shellcheck`の実行: ShellCheckのerrorがあった場合、CIで検出、注意を投げかけます
-* インデントはEditorConfigで自動修正がかかります。VSCodeで[EditorConfig.EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)をインストールすることで、リアルタイムで適用されます
-* VSCodeで[timonwong.shellcheck](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)をインストールすることで、リアルタイムでShellCheckの結果を確認できます
-* ローカルでshellcheckを実行する手順を実行できます。次のコマンドを実行します
+* Running `shellcheck` on PRs: If there are any ShellCheck errors, they will be detected by CI and a warning will be issued
+* Indentation is automatically corrected with EditorConfig. By installing [EditorConfig.EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig) in VSCode, it will be applied in real-time
+* By installing [timonwong.shellcheck](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck) in VSCode, you can see the results of ShellCheck in real-time
+* You can run shellcheck locally by executing the following steps. Run the following commands:
 
 ```shell
 paths=(".")
@@ -94,295 +40,295 @@ for item in "${paths[@]}"; do
 done
 ```
 
-## スタイルガイドでどう変わる (How the Style Guide Changes)
+## How the Style Guide Changes
 
-スタイルガイドに沿ったスクリプトは次の対応が標準的に入っていると期待できます。
+Scripts that follow the style guide can be expected to include the following standard modifications:
 
-* スクリプト構造が統一されます。スタイルガイドに示した通りの構造でスクリプト構造が一定になます
-* shellcheckに対応します。shellcheckの標準実行で検出されるものはなく、一部過剰な警告はインラインで無視するためdisableされています
-* CIによる`shellcheck`の自動実行が行われます。これにより`shellcheck`に違反した記述はPR時点で検出されます
-* ローカルで`shellcheck`を実行する手順が明記されます。これによりCIでの警告をローカルで再現、先につぶすことができます
-* 共通関数がサポートされ、`common::print`のようなログ関数やデバッグ有効化がサポートされます。これによりログフォーマットの統一、デバッグ機能の統一的な有効化が可能になります
-* `--debug`引数がサポートされます。これによりスクリプトの変更なく`set -e`を有効にして実行できます
-* `--dry-run`引数がサポートされます。作用のあるスクリプトで設定されており、処理を反映することなく何が実行されるか検証可能になります
-* `--aws-args`引数がサポートされます。awsコマンドを含むスクリプトで引数が設定されており、ローカルの認証情報でスクリプトを実行できます
-* 実行時にスクリプトの引数が表示されます。これにより処理開始前に何がどのような値で開始するか明確になります
+* The script structure will be unified. Scripts will have a consistent structure as outlined in the style guide
+* They will be compatible with shellcheck. No issues will be detected by standard shellcheck runs, and some excessive warnings will be disabled inline
+* CI will automatically run `shellcheck`. This will detect any violations at the PR stage
+* Procedures for running `shellcheck` locally will be specified. This allows warnings detected by CI to be reproduced and fixed locally
+* Common functions will be supported, such as logging functions like `common::print` and enabling debugging. This ensures uniform log formatting and consistent enabling of debugging features
+* The `--debug` argument will be supported. This allows the script to run with `set -e` enabled without modifying the script
+* The `--dry-run` argument will be supported. This is set in scripts with side effects, allowing you to verify what will be executed without actually making any changes
+* The `--aws-args` argument will be supported. This is set in scripts that include aws commands, allowing them to run with local credentials
+* Script arguments will be displayed at runtime. This makes it clear what values are being used before execution begins
 
-自分が書くときは、スクリプトの構造に沿っていること、shellcheckの問題がないことを確認してください。この2点を満たすことでほとんどの些細なミスを防ぎ、一定のスクリプトデバッガビリティを確保できます。
+When writing scripts, ensure they follow the script structure and have no shellcheck issues. Meeting these two points will prevent most minor mistakes and ensure a certain level of script debuggability.
 
-* [スクリプトの構造 (Script Structure)](#スクリプトの構造-script-structure)にそってスクリプトを作成してください
-  * --dry-runや--debugなどの共通引数を用意してください
-  * 引数の初期化を行いましょう
-  * 共通関数を用いたログ出力を行いましょう
-  * 既存スクリプトをコピーするとやりやすいでしょう
-* shellcheckの問題がローカル/PRで検出されないことを確認してください
+* Create scripts according to the [Script Structure](#スクリプトの構造-script-structure)
+  * Include common arguments such as --dry-run and --debug
+  * Initialize arguments
+  * Use common functions for log output
+  * Copy existing scripts to make it easier
+* Ensure no shellcheck issues are detected locally or in PRs
 
-# 背景 (Background)
+# Background
 
-## どのシェルを使うか (Which Shell to Use)
+## Which Shell to Use
 
-> **Note** 独自規約 (ベース: Googleスタイルガイド)
+> **Note** Custom rule (based on Google Shell Style Guide)
 
-* ✔️ DO: すべてのスクリプトはBashを用います
-* ✔️ DO: スクリプトの先頭に`#!/bin/bash`を記述します
-* ✔️ DO: シェルオプション設定に`set -euo pipefail`を用います。(独自)
-* ⚠️ CONSIDER: 他のシェルを使用する場合、その理由をコメントで記述します。(独自)
+* ✔️ DO: Use Bash for all scripts
+* ✔️ DO: Write `#!/bin/bash` at the top of the script
+* ✔️ DO: Use `set -euo pipefail` for shell option settings. (custom)
+* ⚠️ CONSIDER: If using other shells, explain the reason in comments. (custom)
 
-Bashを用いてください。実行可能ファイルは`#!/bin/bash`と最小限のフラグで始めます。全ての実行可能シェルスクリプトを`bash`に制限することで、全てのマシンにインストールされた一貫したシェルを使用できます。これに対する唯一の例外は、コーディング対象によって強制される場合です。例えば、Solaris SVR4パッケージはどんなスクリプトにもplain Bourne shellであることを要求するため`/bin/sh`を用います。
+Use Bash. Executable files should start with `#!/bin/bash` and minimal flags. Restricting all executable shell scripts to `bash` ensures a consistent shell installed on all machines. The only exception to this rule is when required by the coding target. For example, Solaris SVR4 packages require plain Bourne shell for any scripts, thus using `/bin/sh`.
 
-シェルオプションの設定に`set`を利用することで、スクリプトを`bash script_name`として呼び出してもその機能を損なわないようにします。`set -euo pipefail`は、スクリプトのエラーを早期に自動検出し、エラーが発生した場合にスクリプトを終了させるためのものです。`set -e`はエラーが発生した場合にスクリプトを終了させるためのものです。`set -u`は未定義の変数を参照した場合にエラーを発生させるためのものです。`set -o pipefail`はパイプラインの途中でエラーが発生した場合にスクリプトを終了させるためのものです。
+Using `set` for shell option settings ensures that even if the script is called with `bash script_name`, its functionality is not impaired. `set -euo pipefail` automatically detects errors early and terminates the script if an error occurs. `set -e` terminates the script if an error occurs. `set -u` triggers an error when referencing undefined variables. `set -o pipefail` terminates the script if an error occurs in the middle of a pipeline.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 #!/bin/bash
 set -euo pipefail
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 #!/bin/bash
-# setがありません
-```
+# Missing set
 
-```shell
 #!/bin/bash -euo pipefail
-# setにしてください。bash ./function.sh としたとき-euoは無効になります。
+# Use set. -euo is disabled when using bash ./function.sh.
 ```
 
-## いつシェルを使うか (When to use Shell)
 
-> **Note** 独自規約 (ベース: Googleスタイルガイド)
+## When to Use Shell
 
-* ✔️ DO: 小さなユーティリティまたは単純なラッパー スクリプトにのみ使用してください
-* ✔️ DO: GitHub ActionsなどCIで数行のスクリプトを書きたくなった場合、yamlファイルに埋め込むのではなくシェルスクリプトを作成してください。(独自)
-* ✔️ DO: GitHub ActionsなどCIで複数のワークフローでパラメーター違いの同処理を呼び出す場合、yamlファイルに埋め込むのではなくシェルスクリプトを作成してください。(独自)
-* ⚠️ CONSIDER: もしパフォーマンスが重要な場合、他言語を含めてシェル以外の手段を検討してください
-* ⚠️ CONSIDER: 100行を超えるスクリプトや、単純ではない制御フロー ロジックを使用するスクリプトを書いている場合は、今すぐにより構造化された言語で書き直す必要があります。スクリプトは大きくなることを念頭に置いてください。後で時間のかかる書き直しを避けるために、早めにスクリプトを書き直してください
-* ⚠️ CONSIDER: コードの複雑さを評価するときは (言語を切り替えるかどうかを決定する場合など)、コードの作成者以外の人がコードを簡単に保守できるかどうかを考慮してください
+> **Note** Custom rule (based on Google Shell Style Guide)
 
-主に他のユーティリティを呼び出し、比較的少ないデータ操作しか行わない場合、シェルはタスクに適した選択肢です。シェルスクリプトは開発言語ではありませんが、CIでさまざまなユーティリティスクリプトの作成に使用されています。このスタイルガイドは、シェルスクリプトを広範囲に展開して使用することを提案するものではなく、シェルスクリプトの使用を認めるものです。
+* ✔️ DO: Use only for small utilities or simple wrapper scripts
+* ✔️ DO: If you want to write a few lines of script in CI like GitHub Actions, create a shell script instead of embedding it in a yaml file. (custom)
+* ✔️ DO: If calling the same process with different parameters in multiple workflows in CI like GitHub Actions, create a shell script instead of embedding it in a yaml file. (custom)
+* ⚠️ CONSIDER: If performance is critical, consider other languages besides shell
+* ⚠️ CONSIDER: If writing a script over 100 lines or using complex control flow logic, rewrite it in a more structured language as soon as possible. Anticipate that the script will grow. Rewriting early can avoid a time-consuming rewrite later
+* ⚠️ CONSIDER: When evaluating code complexity (e.g., deciding whether to switch languages), consider whether the code can be easily maintained by someone other than the original author
 
-シェルスクリプトは小さな用途やシンプルなラッパースクリプトとして利用してください。特に、GitHub Actionsにおいて「複数行に渡る処理」や「複数のワークフローで再利用する処理」を書く場合にシェルスクリプトを用います。Bashはテキストを扱うことが容易な一方、あまりにも複雑な処理や言語/アプリ特有の処理を扱うケースでは向いていません。構造化してかける言語を検討するといいでしょう。
+Shell is a suitable choice for tasks that mainly involve calling other utilities and performing relatively few data manipulations. Although shell scripts are not a development language, they are used to create various utility scripts in CI. This style guide does not suggest extensive deployment of shell scripts but acknowledges their use.
 
-## シェルの実行環境 (Shell Execution Environment)
+Use shell scripts for small utilities or simple wrapper scripts. In particular, use shell scripts for "multi-line processing" or "reusable processing in multiple workflows" in GitHub Actions. While Bash makes it easy to handle text, it is not suitable for overly complex processing or language/app-specific processing. Consider using a structured language in such cases.
 
-> **Note** 独自規約
 
-* ✔️ DO: シェルの実行はGitHub Actionsの`ubuntu-latest`ランナーの実行を想定します
-* ✔️ DO: ローカルで実行する場合、Ubuntu (WSL)を用います
-* ⚠️ CONSIDER: 他の環境で実行する場合、その環境に合わせてシェルスクリプトを修正してください。(macOSなど)
+## Shell Execution Environment
 
-シェルスクリプトはGitHub Actionsの`ubuntu-latest`ランナーの実行を想定しています。ローカルで実行する場合はUbuntu (WSL)を用います。
-他環境ではGNU系コマンドである保証がないため、環境に合わせてシェルスクリプトを修正する必要があります。
+> **Note** Custom rule
 
-# シェルファイルとインタプリタ呼出 (Shell Files and Interpreter Invocation)
+* ✔️ DO: Assume shell execution in GitHub Actions `ubuntu-latest` runner
+* ✔️ DO: When running locally, use Ubuntu (WSL)
+* ⚠️ CONSIDER: If running in other environments, adjust the shell script accordingly (e.g., macOS)
 
-## ファイル拡張子 (File Extensions)
+Shell scripts are assumed to be executed in the `ubuntu-latest` runner of GitHub Actions. When running locally, use Ubuntu (WSL). Since there is no guarantee of GNU commands in other environments, you need to adjust the shell script to match the environment.
 
-> **Note** 独自規約 (ベース: Googleスタイルガイド)
+# Shell Files and Interpreter Invocation
 
-* ✔️ DO: 外部から呼び出すスクリプトは`.sh`拡張子を用います
-* ✔️ DO: 外部から呼び出さない内部専用のスクリプトには拡張子を用いません。(独自)
+## File Extensions
 
-実行可能ファイルは「`.sh`(強く推奨)」か「拡張子なし」にします。外部から呼び出すスクリプトは必ず`.sh`とし実行可能にしません。
+> **Note** Custom rule (based on Google Shell Style Guide)
 
-**推奨 (recommended)**
+* ✔️ DO: Use the `.sh` extension for scripts called from outside
+* ✔️ DO: Do not use extensions for scripts that are internal only. (custom)
+
+Executable files should either have a `.sh` extension (strongly recommended) or no extension. Scripts called from outside must have a `.sh` extension and should not be made executable.
+
+**Recommended**
 
 ```shell
-# 外部から呼び出すスクリプト
+# Script called from outside
 foo.sh
 
-# 内部からしかよびださないスクリプト
+# Script called only internally
 _functions
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 外部から呼び出すスクリプトを拡張子なしにするのはやめましょう
+# Avoid using no extension for scripts called from outside
 foo
 
-# 内部からしかよびださないスクリプトなのに.shをつけるのはやめましょう
+# Avoid using .sh for scripts called only internally
 functions.sh
 ```
 
 ## SUID/SGID
 
-> **Note** 独自規約 (ベース: Googleスタイルガイド)
+> **Note** Custom rule (based on Google Shell Style Guide)
 
-* ✔️ DO: 権限昇格が必要な場合`sudo`を使用してください
-* ❌ DO NOT: SUIDやSGIDは禁止です
-* ❌ DO NOT: GitHub Actionsのスクリプトは`sudo`も禁止です。(独自)
+* ✔️ DO: Use `sudo` if you need to elevate privileges
+* ❌ DO NOT: SUID and SGID are prohibited
+* ❌ DO NOT: `sudo` is also prohibited in GitHub Actions scripts. (custom)
 
-SUIDとSGIDはシェルスクリプトにおいて禁止です。シェルにはセキュリティの問題が多々あり、それによりSUID/SGIDを許可するのに十分な安全さを確保することはほぼ不可能です。bashはSUIDの実行を困難にするが、プラットフォームによってはそれが可能であるため明示的に禁止します。権限昇格が必要であれば`sudo`で呼び出してください。
+SUID and SGID are prohibited in shell scripts. Shell has many security issues, making it nearly impossible to ensure sufficient safety to allow SUID/SGID. Although bash makes SUID execution difficult, it is possible on some platforms, so it is explicitly prohibited. If privilege escalation is needed, use `sudo`.
 
-GitHub Actionsで実行する限りにおいて、sudo、SUID、SGIDは使う必要がないため禁止します。
+As long as scripts are executed in GitHub Actions, sudo, SUID, and SGID are unnecessary and therefore prohibited.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# 呼び出し時にsudoを使用
+# Use sudo when calling
 sudo foo.sh
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# スクリプト内部でsuやrootユーザー切り替え
+# Switching to su or root user inside the script
 ```
 
-# 環境 (Environment)
+# Environment
 
-## スクリプトの呼び出し (Script Invocation)
+## Script Invocation
 
-> **Note** 独自規約
+> **Note** Custom rule
 
-* ✔️ DO: スクリプトの実行は、bashを経由して呼び出します
-* ✔️ DO: スクリプト引数はクォートで囲みます。ただし固定文字列のようにスペースの入る余地がない場合はクォートを省略しても構いません
-* ❌ DO NOT: スクリプトを直接実行してはいけません
+* ✔️ DO: Invoke scripts through `bash`
+* ✔️ DO: Enclose script arguments in quotes. However, if there is no possibility of spaces, such as in fixed strings, quotes can be omitted
+* ❌ DO NOT: Do not execute scripts directly
 
-スクリプトを直接実行することは避けてください。`bash`を経由して呼び出すことで、クリプトの実行環境を統一しスクリプトの実行環境を保証するとともに、exitによってインタラクティブに操作している現在のシェルが終了するのを防ぎます。
+Avoid executing scripts directly. By invoking scripts through `bash`, you ensure a consistent execution environment and prevent the current interactive shell from exiting due to an exit command.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 bash foo.sh
 
-# スペースがない場合はクォートを省略しても構いません
+# Quotes can be omitted if there is no possibility of spaces
 bash foo.sh --baz true
 
-# クォ－トで囲むことでスペースが入っても安全になる
+# Enclosing in quotes makes it safe even if there are spaces
 bash foo.sh --foo "hello world" --bar "$bar"
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 直接呼出し
+# Direct invocation
 . ./foo.sh
 
-# chmod +xで実行権限を与えて実行もだめ
+# Do not give execute permission with chmod +x and execute
 chmod +x foo.sh
 ./foo.sh
 
-# bar変数にスペースが含まれたり、空文字列だと引数解釈がおかしくなる可能性がある
+# If the bar variable contains spaces or is an empty string, argument parsing may go wrong
 bash foo.sh --foo hello world --bar $bar
 ```
 
-## 共通関数スクリプト (Common Function Scripts)
+## Common Function Scripts
 
-> **Note** 独自規約
+> **Note** Custom rule
 
-* ✔️ DO: 共通関数の呼び出しは`.`を用いてください
+* ✔️ DO: Use `.` to invoke common functions
 
-共通関数を呼び出す場合、`source`ではなく`.`用いてください。これは`.`がPOSIX準拠であるためです。ただ、shellcheck SC1091は避けるのが難しい場合もあるため、その時はshellcheck disableを用いてください。
+When calling common functions, use `.` instead of `source`. This is because `.` is POSIX compliant. However, avoiding shellcheck SC1091 can be difficult, so use shellcheck disable in such cases.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # shellcheck disable=SC1091
 . "$(dirname "${BASH_SOURCE[0]}")/_functions"
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# sourceではなく . を用いる
+# Use . instead of source
 source "$(dirname "${BASH_SOURCE[0]}")/_functions"
 ```
 
-## スクリプトの引数制御 (Script Argument Control)
 
-> **Note** 独自規約
+## Script Argument Control
 
-* ✔️ DO: 引数処理はwhile文で回しつつcase文で処理します
-* ✔️ DO: スクリプトの引数は`--パラメーター名 値`のセットで受け取ります。パラメーター名は十分に理解できる名前を付けます
-* ✔️ DO: スクリプトの引数指定が不要なオプショナル引数を用いる場合、ローカル変数で`${_変数名:=デフォルト値}`を使って初期化します
-* ⚠️ CONSIDER: `--パラメーター名`単独で受け取ることは避けてください、ただし状況によっては許容され、この場合`shift 2`ではなく`shift`を用います
-* ❌ DO NOT: スクリプトの引数はをパラメーター指定なしで`値1 値2 値3`のように受け取りません
-* ❌ DO NOT: スクリプトの引数名に`--f`のような1文字の引数名や`--ns`のような省略名は避けてください
+> **Note** Custom rule
 
-スクリプトの引数制御は引数をwhileでループさせながらcase文で判定、shiftで引数をずらしながら解析します。スクリプトの引数として受ける場合、ローカル変数や定数と区別するため変数は`_大文字`とします。スクリプトの引数は、処理本体へ入る前に初期化を確実に行い、ログ表示を行うことでデバッグを容易にします。
+* ✔️ DO: Process arguments with a while loop and handle them with a case statement
+* ✔️ DO: Accept script arguments in the form of `--parameter-name value`. Use understandable names for parameter names
+* ✔️ DO: If using optional arguments that do not require specification, initialize them with local variables using `${_variable_name:=default_value}`
+* ⚠️ CONSIDER: Avoid accepting `--parameter-name` alone; however, it is permissible in some situations, in which case use `shift` instead of `shift 2`
+* ❌ DO NOT: Do not accept script arguments without parameter specification, such as `value1 value2 value3`
+* ❌ DO NOT: Avoid using single-letter argument names like `--f` or abbreviated names like `--ns`
 
-**推奨 (recommended)**
+Control script arguments by looping through them with a while loop, using a case statement for evaluation, and shifting the arguments as they are parsed. When receiving script arguments, use `_UPPERCASE` for variables to distinguish them from local variables and constants. Ensure that script arguments are initialized before entering the main processing, and display them in logs to facilitate debugging.
 
-```bash
-set -euo pipefail # -uによって初期化されていない変数で処理を止める
+**Recommended**
+
+```shell
+set -euo pipefail # -u stops processing with uninitialized variables
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    # required (省略不能な引数。指定しないと初期化で止める)
-    --bar-piyo) _BAR_PIYO=$2; shift 2; ;; # `--bar-piyo "値"`で受け取る
-    # optional (省略可能な引数。デフォルト値で初期化する)
-    --optional) _OPTIONAL=$2; shift 2; ;; # 省略可能。変数の表示時にデフォルト値で初期化する
+    # required (mandatory arguments; processing stops if not specified)
+    --bar-piyo) _BAR_PIYO=$2; shift 2; ;; # Accept with `--bar-piyo "value"`
+    # optional (optional arguments; initialized with default values)
+    --optional) _OPTIONAL=$2; shift 2; ;; # Optional. Initialized with default value when displaying variables.
     *) shift ;;
   esac
 done
 
-# 変数を初期化する
-common::print "引数:"
-common::print "--bar-piyo=${_BAR_PIYO}" # オプショナルな引数は、省略されてもここでデフォルト値で初期化する
-common::print "--optional=${_OPTIONAL:="true"}" # オプショナルな引数は、省略されてもここでデフォルト値で初期化する
+# Initialize variables
+common::print "Arguments:"
+common::print "--bar-piyo=${_BAR_PIYO}" # Optional arguments are initialized with default values here if omitted.
+common::print "--optional=${_OPTIONAL:="true"}" # Optional arguments are initialized with default values here if omitted.
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
-```bash
-set -euo pipefail # -uによって初期化されていない変数で処理を止める
+```shell
+set -euo pipefail # -u stops processing with uninitialized variables
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     # required
-    -f) _FOO_=$2; shift 2; ;; # ハイフン一つの引数名はダメ
-    --bar) _BAR=true; shift; ;; # 引数なしで受け取ることは可能なら避けてtrue/falseで受けるほうが望ましい
+    -f) _FOO_=$2; shift 2; ;; # Single hyphen argument names are not allowed
+    --bar) _BAR=true; shift; ;; # Avoid accepting arguments without values; better to use true/false
     # optional
-    -o) _OPTIONAL=$2; shift 2; ;; # 変数初期化がないので引数に指定されないと実行時に落ちる
+    -o) _OPTIONAL=$2; shift 2; ;; # No variable initialization, so it fails at runtime if not specified
     *) shift ;;
   esac
 done
 
-# 変数初期化なし
+# No variable initialization
 ```
 
-## デバッグモードとドライランモード (Debug and Dry-run Mode)
 
-> **Note** 独自規約
+## Debug and Dry-run Mode
 
-* ✔️ DO: `--debug true|false`のようなデバッグモードを用意します
-* ✔️ DO: `--dry-run true|false`のようなドライランモードを実行不能な場合を除いて用意します
-* ✔️ DO: `--dry-run`引数省略時のデフォルト値は`true`にします
+> **Note** Custom rule
 
-スクリプトの共通の引数として`--debug`と`--dry-run`を入れることを検討してください。デバッグモードやドライランモードはスクリプトの動作を変更するため、デバッグやテストを行う際に有用です。デバッグモードは`set -x`を有効にすることでスクリプトの実行をトレースします。ドライランモードは実際のコマンドを実行せず、実行されるコマンドを表示したりコマンドのドライランモードを利用することで、スクリプトの動作を確認します。
-デバッグモードやドライランを用意する初期化処理でスクリプト全体が長くなりがちですが、スクリプトの動作を変更するための引数は必要なものと割り切ります。
+* ✔️ DO: Provide a debug mode like `--debug true|false`
+* ✔️ DO: Provide a dry-run mode like `--dry-run true|false` unless it is impractical
+* ✔️ DO: Set the default value of the `--dry-run` argument to `true` when omitted
 
-`--dry-run`引数省略時のデフォルト値は`true`にすることで、スクリプトを実行しても間違って実行されないようにします。これは不意の実行を防ぐためにとても有用です。
+Consider including `--debug` and `--dry-run` as common arguments for scripts. Debug and dry-run modes are useful for debugging and testing as they change the script's behavior. Debug mode traces script execution by enabling `set -x`. Dry-run mode verifies script behavior by displaying the commands that would be executed or utilizing the command's dry-run mode without actually executing them. Although initializing these modes can make the script longer, necessary arguments for modifying script behavior are essential.
 
-**推奨 (recommended)**
+Setting the default value of the `--dry-run` argument to `true` prevents accidental execution when the script is run. This is very useful to avoid unintended runs.
 
-```bash
-# ... 省略
+**Recommended**
 
-# 引数処理
+```shell
+# ... omitted
+
+# Argument processing
 while [[ $# -gt 0 ]]; do
   case $1 in
     # optional
-    --debug) _DEBUG=$2; shift 2; ;; # デバッグモード
-    --dry-run) _DRYRUN=$2; shift 2; ;; # ドライランモード
+    --debug) _DEBUG=$2; shift 2; ;; # Debug mode
+    --dry-run) _DRYRUN=$2; shift 2; ;; # Dry-run mode
     *) shift ;;
   esac
 done
 
-# 変数を初期化する
-common::print "引数:"
-common::print "--debug=${_DEBUG:="false"}" # デフォルトfalseにしてデバッグモードは必要な時だけ有効にします
-common::print "--dry-run=${_DRYRUN:="true"}" # デフォルトtrueにしてスクリプトをただ実行しても間違って実行されないようにします
+# Initialize variables
+common::print "Arguments:"
+common::print "--debug=${_DEBUG:="false"}" # Set default to false to enable debug mode only when needed
+common::print "--dry-run=${_DRYRUN:="true"}" # Set default to true to avoid accidental execution
 
-# デバッグモードを設定する
-common::debug_mode # 共通スクリプトでset -xがかかります
+# Set debug mode
+common::debug_mode # Common script enables set -x
 
-# ドライランの用意
+# Prepare for dry-run
 dryrun=""
 dryrun_k8s=""
 dryrun_aws=""
@@ -394,84 +340,84 @@ if [[ "${_DRYRUN}" == "true" ]]; then
   dryrun_az="--dryrun"
 fi
 
-# 共通関数を使ってデバッグメッセージを出力できる。common::debugの実装は次のようなものをイメージしてください
+# Use common functions to output debug messages. Imagine the implementation of common::debug as follows:
 # function common::debug {
 #   if [[ "${_DEBUG:=false}" == "true" ]]; then
 #     echo "$*"
 #   fi
 # }
-common::debug "デバッグメッセージ"
+common::debug "Debug message"
 
-# コマンドをechoに置き換えることでドライランモードを実現
+# Replace command with echo for dry-run mode
 $dryrun dotnet run ...
 
-# kubectlは--dry-run=serverを指定することでサーバーサイド検証付きでドライランモードを実現
+# Use --dry-run=server for kubectl to enable dry-run mode with server-side validation
 kubectl apply -f ./manifests ${dryrun_k8s}
 
-# aws s3 cpは--dryrunを差し込むことでドライランモードを実現
+# Insert --dryrun for aws s3 cp to enable dry-run mode
 aws s3 cp $dryrun_aws ...
 
-# aws s3以外はドライランモードがないことがほとんどなのでechoに差し替えが妥当
+# Most AWS commands except aws s3 do not have a dry-run mode, so replace them with echo
 $dryrun aws scheduler ...
 
-# az webappは--dryrunを差し込むことでドライランモードを実現
+# Insert --dryrun for az webapp to enable dry-run mode
 az webapp up $dryrun_az ...
 
-# az containerappは--dryrunがないのでechoに差し替えが妥当
+# Replace az containerapp with echo as it does not have a dry-run mode
 $dryrun az containerapp ...
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 強制で-xで入れるとスクリプト実行が読みづらいのでデバッグモードを用意しましょう
+# Forcing -x makes script execution hard to read, so provide a debug mode
 set -euxo pipefail
 
-# 引数処理
+# Argument processing
 while [[ $# -gt 0 ]]; do
   case $1 in
-    # --debugは必須です。入れてね。
-    # --dry-runできそうなのに入れないのはなぜ?
+    # --debug is essential. Please include it.
+    # Why not include --dry-run if possible?
     *) shift ;;
   esac
 done
 
-# デバッグモードがないので標準出力される
-echo "デバッグメッセージ"
+# No debug mode, so standard output is used
+echo "Debug message"
 
-# dry-runできそうじゃない!?
+# No dry-run mode!?
 dotnet run ...
 
-# dry-runできそうじゃない!?
+# No dry-run mode!?
 kubectl apply -f ./manifests
 
-# dry-runできそうじゃない!?
+# No dry-run mode!?
 aws s3 cp ...
 
-# dry-runできそうじゃない!?
+# No dry-run mode!?
 az webapp up ...
 ```
 
-## ローカルで実行可能にする (Make It Executable Locally)
+## Make It Executable Locally
 
-> **Note** 独自規約
+> **Note** Custom rule
 
-* ✔️ DO: スクリプトはローカル環境で実行可能にします
-* ❌ DO NOT: 利用者にスクリプトで使っているCLIの知識を求めることは避けてください
+* ✔️ DO: Make scripts executable in the local environment
+* ❌ DO NOT: Avoid requiring users to have knowledge of the CLI used in the script
 
-スクリプトをローカル環境で実行可能にすることで、スクリプトの開発が用意になり、また動作を確認しやすくなります。スクリプトの実行を可能にするためには、AWS引数やドライランモードなどのオプションを提供することが有効です。一方で、`az login`のように事前にログインすることで以降のセッションで認証指定する必要がない場合は、この考慮は不要です。
+Making scripts executable in the local environment facilitates script development and makes it easier to verify their operation. Providing options such as AWS arguments and dry-run mode is useful for making scripts executable. However, if authentication can be handled with a prior login session, such as with `az login`, this consideration is unnecessary.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# ローカル実行時に--aws-argsを指定することでAWS認証情報を渡す
+# Pass AWS credentials by specifying --aws-args during local execution
 $ my_script.sh --aws-args "--profile aws-profile --region ap-northeast-1" --dry-run true
 ```
 
 ```shell
-# ... 省略
+# ... omitted
 
-# 引数処理
+# Argument processing
 while [[ $# -gt 0 ]]; do
   case $1 in
     # optional
@@ -480,41 +426,40 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# 変数を初期化する
-common::print "引数:"
+# Initialize variables
+common::print "Arguments:"
 common::print "--aws-args=${_AWS_ARGS:=""}"
 
-# ... 省略
+# ... omitted
 
-# ローカル認証用の引数をスクリプト実行時に与えて実行できる
+# Provide local authentication arguments during script execution
 aws rds describe-db-clusters $_AWS_ARGS
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# ローカル実行時に環境変数などを駆使してAWS認証情報を渡すことになる。実行者にaws cli知識が必要になる。
+# Pass AWS credentials using environment variables during local execution. Requires the user to have aws cli knowledge.
 $ AWS_PROFILE=aws-profile AWS_REGION=ap-northeast-1 my_script.sh
 ```
 
 ```shell
-# ... 省略
+# ... omitted
 
-# awsコマンドをローカルで実行できるかは環境次第で、ユーザーを選んでしまう
+# Whether the aws command can be executed locally depends on the environment, limiting the user base.
 aws rds describe-db-clusters
 ```
 
-
 ## STDOUT vs STDERR
 
-> **Note** 独自規約 (ベース: Googleスタイルガイド)
+> **Note** Custom rule (based on Google Shell Style Guide)
 
-* ✔️ DO: エラーメッセージはSTDERRに出力します
-* ❌ DO NOT: エラーメッセージをSTDOUTに出力しないでください
+* ✔️ DO: Output error messages to STDERR
+* ❌ DO NOT: Do not output error messages to STDOUT
 
-エラーメッセージは`STDERR`に出力することで、通常の状態と本質的な問題の切り分けを容易にします。スクリプトで独自関数を定義するのではなく共通関数`common::error`関数を用いてください。
+By outputting error messages to `STDERR`, it becomes easier to distinguish between normal output and actual issues. Instead of defining custom functions for error messages in scripts, use the common function `common::error`.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 function common::error {
@@ -527,7 +472,7 @@ if ! do_something; then
 fi
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 if ! do_something; then
@@ -536,73 +481,73 @@ if ! do_something; then
 fi
 ```
 
-# 命名規則 (Naming Conventions)
+# Naming Conventions
 
-## 関数名 (Function Names)
 
-> **Note** 独自規約 (ベース: Googleスタイルガイドとicy/bash-coding-style)
+## Function Names
 
-* ✔️ DO: キーワード`function`を付けます。(独自)
-* ✔️ DO: 小文字、単語の区切りにはアンダースコアを利用します
-* ✔️ DO: 共通スクリプトはパッケージと関数名を`::`で区切ります
-* ✔️ DO: 共通スクリプト内部でしか利用されなくない関数は`__`をプレフィックスにつけます。(独自)
-* ❌ DO NOT: 関数名の後にカッコ`()`はつけません。(独自)
+> **Note** Custom rule (based on Google Shell Style Guide and icy/bash-coding-style)
 
-単一の関数を書いている場合、小文字と単語の区切りにはアンダースコアを利用してください。もし共通関数を書いている場合、関数名はパッケージ名と`::`で分離します。
-ブレースは関数名と同じ行に記述します。関数名の後に`()`が存在する場合`function`キーワードは必須じゃありませんが、関数であることを明示するためにfunctionを用い`()`は利用しません。
+* ✔️ DO: Use the `function` keyword. (custom)
+* ✔️ DO: Use lowercase letters and underscores to separate words
+* ✔️ DO: Separate package and function names with `::` in common scripts
+* ✔️ DO: Prefix functions used only within common scripts with `__`. (custom)
+* ❌ DO NOT: Do not use parentheses `()` after function names. (custom)
 
-**推奨 (recommended)**
+For single functions, use lowercase letters and underscores to separate words. For common functions, separate package names and function names with `::`.
+Braces should be written on the same line as the function name. While the `function` keyword is not mandatory if parentheses `()` are used after the function name, use `function` to explicitly indicate it is a function, and do not use `()`.
+
+**Recommended**
 
 ```shell
-# 単一の関数
+# Single function
 function my_func {
   ...
 }
 
-# パッケージとして公開する関数
+# Function published as a package
 function mypackage::my_func {
   ...
 }
 
-# パッケージの内部でしか使ってほしくない関数は__をプレフィックスにつける
+# Functions intended to be used only within the package are prefixed with __
 function __super_internal_func {
   ...
 }
-
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# functionがなく()が利用されている
+# No function keyword and parentheses are used
 MyFunc () {
   ...
 }
 
-# 関数名がパスカルケース
+# Function name in PascalCase
 function MyFunc {
   ...
 }
 
-# 関数名がキャメルケース
-function myFunc  {
+# Function name in camelCase
+function myFunc {
   ...
 }
 
-# パッケージと関数名の区切り::がない
+# No :: to separate package and function name
 function package_my_func {
   ...
 }
 ```
 
-## 変数名 (Variable Names)
+## Variable Names
 
-> **Note** 独自規約 (ベース: Googleスタイルガイドとicy/bash-coding-style)
+> **Note** Custom rule (based on Google Shell Style Guide and icy/bash-coding-style)
 
-* ✔️ DO: 関数名と同様に小文字、単語の区切りにはアンダースコアを利用します
-* ✔️ DO: ループの変数名は、ループ対象の変数と似た名前にします
+* ✔️ DO: Use lowercase letters and underscores to separate words, similar to function names
+* ✔️ DO: Name loop variables similarly to the variables they iterate over
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 for zone in "${zones[@]}"; do
@@ -610,7 +555,7 @@ for zone in "${zones[@]}"; do
 done
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 for item in "${zones[@]}"; do
@@ -618,38 +563,39 @@ for item in "${zones[@]}"; do
 done
 ```
 
-定数と環境変数は大文字で宣言します。定数はファイルの先頭で宣言します。
+Declare constants and environment variables in uppercase. Constants should be declared at the top of the file.
 
-* ✔️ DO: 定数は全て大文字、区切りはアンダースコア、ファイルの先頭で宣言します
-* ✔️ DO: 定数とエクスポートされる環境変数は大文字で宣言します
+* ✔️ DO: Declare constants in uppercase with underscores to separate words, at the top of the file
+* ✔️ DO: Declare constants and exported environment variables in uppercase
 
-**推奨 (recommended)**
+
+**Recommended**
 
 ```shell
-# 定数
+# Constants
 readonly PATH_TO_FILES='/some/path'
 
-# 定数と環境変数
+# Constants and environment variables
 declare -xr ORACLE_SID='PROD'
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 定数を小文字宣言
+# Declaring constants in lowercase
 readonly path_to_file='/some/path'
 
-# 定数と環境変数を小文字宣言
+# Declaring constants and environment variables in lowercase
 declare -xr oracle_sid='PROD'
 ```
 
-スクリプトの引数処理のように親スコープとなるユーザー実行から与えられる変数は`_大文字`、区切りはアンダースコアで宣言します。
+Variables provided by the user in the parent scope, such as script arguments, should be declared in `_UPPERCASE` with underscores to separate words.
 
-グローバル変数はシェル全体で使用されるため、それらの利用時にエラーを捕捉することが重要です。読み取り専用を意図した変数をの宣言を明示的に行います。
+Global variables are used throughout the shell, so it is important to catch errors when using them. Explicitly declare variables intended to be read-only.
 
-* ⚠️ CONSIDER: `readonly`や`declare -r`を使って読み取り専用を保証します。このスタイルは可能であれば実施しますが無理に行う必要はありません。(独自)
+* ⚠️ CONSIDER: Use `readonly` or `declare -r` to ensure they are read-only. This style should be applied whenever possible, but it is not mandatory. (custom)
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 readonly zlib1g_version="$(dpkg --status zlib1g | grep Version: | cut -d ' ' -f 2)"
@@ -658,29 +604,29 @@ if [[ -z "${zlib1g_version}" ]]; then
 fi
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 読み取り専用になっていない
+# Not read-only
 zlib1g_version="$(dpkg --status zlib1g | grep Version: | cut -d ' ' -f 2)"
 if [[ -z "${zlib1g_version}" ]]; then
   error_message
 fi
 ```
 
-関数内で`local`を使って変数宣言すると変数が関数とその子の内側のみから見えることを保証できます。代入値にコマンド置換を用いる場合、宣言と代入は異なる文で行ってください。これはコマンドの終了コードが`local`で上書きされて伝播しないためです。
+When declaring variables within a function using `local`, it ensures that the variables are only visible inside the function and its children. If you use command substitution for assignment, declare and assign the value in separate statements. This prevents the command's exit code from being overwritten by `local`.
 
-* ✔️ DO: 関数専用の変数は`local`で宣言します
-* ✔️ DO: `local`によって代入の終了コードが上書きされるのを避けるため、値の代入にコマンド置換を用いる場合は宣言と代入は異なる行で行います
+* ✔️ DO: Declare function-specific variables with `local`
+* ✔️ DO: When using command substitution for assignment, separate the declaration and assignment to avoid overwriting the command's exit code with `local`
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 my_func2() {
-  # エラーが出得ない代入ならば宣言と代入は同じ行で行ってもよい
+  # Declaration and assignment on the same line are fine if there is no error
   local name="$1"
 
-  # コマンド置換で代入する場合、宣言と代入の行は分離
+  # Separate declaration and assignment when using command substitution
   local my_var
   my_var="$(my_func)"
   (( $? == 0 )) || return
@@ -689,11 +635,11 @@ my_func2() {
 }
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 my_func2() {
-  # $? は常にゼロになっていしまう。なぜならmy_func ではなく、'local' の終了コードを保持するため
+  # $? will always be zero because it holds the exit code of 'local', not 'my_func'
   local my_var="$(my_func)"
   (( $? == 0 )) || return
 
@@ -701,93 +647,95 @@ my_func2() {
 }
 ```
 
-# コメント (Comments)
+# Comments
 
-## ファイルヘッダー (File Header)
+## File Header
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: ファイルの先頭にはファイルの目的や内容を簡潔に説明するコメントを記述します。ただしshebang行の前にはコメントを記述しません
+* ✔️ DO: Include a comment at the beginning of the file that concisely explains the purpose or content of the file. However, do not include comments before the shebang line
 
-ファイルは内容の説明の記述から始めます。全てのファイルに内容の簡単な説明を含むtop-level commentが記述します。
+Files should start with a description of their content. All files should include a top-level comment that briefly describes their content.
 
-**推奨 (recommended)**
+**Recommended**
 
-```bash
+```shell
 #!/bin/bash
 #
 # Perform hot backups of Oracle databases.
 ```
 
-## コメントの実装 (Implementation Comments)
+## Implementation Comments
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: トリッキーだったり重要な意味をもつなど注意を要するコードにはコメントを付与します
-* ✔️ DO: コメントは可能なら短く、理解しやすい説明をします
-* ⚠️ CONSIDER: 端的に説明できない場合、背景を含めて詳細に説明することも検討してください
+* ✔️ DO: Add comments to code that is tricky, has significant meaning, or requires attention
+* ✔️ DO: Keep comments short and easy to understand whenever possible
+* ⚠️ CONSIDER: If a brief explanation is not sufficient, consider providing detailed background information
 
-トリッキーであったり、一目瞭然でない、興味深い、もしくは重要なコードの部分にコメントします。ただし全てにはコメントしてはいけません。複雑なアルゴリズムが存在したり、通常から外れたことをしている場合に、可能ならコメントを付与します。短いコメントで理解しやすい説明ができない場合、背景を含めて詳細に説明します。
+Comment on parts of the code that are tricky, not immediately obvious, interesting, or important. However, do not comment on everything. Add comments when there are complex algorithms or when doing something unusual. If a short comment cannot provide a clear explanation, include detailed background information.
+
 
 ## TODO コメント (TODO Comments)
 
-> **Note** 独自規約 (ベース: Googleスタイルガイド)
+> **Note** Custom rule (based on Google Shell Style Guide)
 
-* ✔️ DO: TODOコメントの利用を検討してください
-* ❌ DO NOT: TODOコメントを記述した個人をコメントに明記しないでください。(独自)
+* ✔️ DO: Consider using TODO comments
+* ❌ DO NOT: Do not include the name of the person who wrote the TODO comment. (custom)
 
-一時的であったり、短期的な解決策、概ね良いが完璧でないコードにはTODOコメントを利用します。`TODO`には全て大文字の文字列`TODO`を含めます。誰が書いたかは`git brame`で確認できるため、個人識別名を書く必要はありません。TODOコメントの目的は、要求に応じてより詳細を探すために、検索可能な一貫した`TODO`を用意することです。`TODO`は参照された人物が問題を修正する確約ではないので、想定する修正を付記すると後々修正しやすいでしょう。
+Use TODO comments for temporary, short-term solutions, or code that is good enough but not perfect. TODO comments should include the uppercase string `TODO`. There is no need to include the individual's name, as it can be identified using `git blame`. The purpose of TODO comments is to provide a searchable and consistent `TODO` marker that can be looked up for more details as needed. Since the person referenced in the TODO is not necessarily committed to fixing the issue, it is helpful to include the expected resolution.
 
-**例**
-
-```bash
-# TODO: このコードはエラー処理が不足しているため修正が必要です。エラー判定を追加してexit 1で終了させます。
-```
-
-# フォーマット (Formatting)
-
-既存のファイルを編集しているときはそのスタイルに従う必要があるが、新しいコードには次のスタイルを適用します。
-
-## タブとスペース (Tabs and Spaces)
-
-> **Note** 独自規約 (ベース: Googleスタイルガイドとicy/bash-coding-style)
-
-* ✔️ DO: EditorConfigに従って自動整形します。(独自)
-* ✔️ DO: 2つのスペースでインデントします。タブは用いません
-* ✔️ DO: 可読性向上のため、ブロック間には空行を入れます
-* ✔️ DO: 末尾スペースは入れません。(独自)
-* ✔️ DO: ファイルの末尾には改行を入れます。(独自)
-* ❌ DO NOT: 既存ファイルに無理にスタイルを適用しないでください。既存ファイルはそのファイルのスタイルを守ってください
-
-EdiroConfigでインデントや末尾スペース、ファイル末尾の改行が自動修正されます。インデントは2つのスペースです。何をするにしても、タブは利用不可です。
-
-多くのエディターは実際のインデントと、表示錠のスペース/タブを好みに応じて切替することは出来ません。別の人のエディターはあなたのエディターと同じ設定を持っているとは限りません。スペースを使うことで、コードがどのエディターでも同じように見えることを保証します。
-
-既存のファイルでは、既存のインデントを忠実に守ってください。既存ファイルに無理にスタイルを適用する必要はありませんが、EditorConfigによる自動修正がかかった場合、それはコミットをしてください。
-
-## 行の長さと長い文字列 (Line Length and Long Strings)
-
-> **Note** 独自規約
-
-* ✔️ DO: 長すぎる文字列の記述にはヒアドキュメントや埋め込み改行を検討してください
-* ⚠️ CONSIDER: 文字列リテラルの長さを短くする方法を探してください
-
-行の最大の長さはなく、N文字で改行する規約はありません。ただし、あまりに長い文字列を記述する必要がある場合、可能であればヒアドキュメントや埋め込み改行を検討してください。適切に分割できない文字列リテラルの存在は許容されますが、短くする方法を探すことを強く推奨します。
-
-**推奨 (recommended)**
+**Example**
 
 ```shell
-# ヒアドキュメントの利用
+# TODO: This code needs to be fixed due to insufficient error handling. Add error checks and exit with 1.
+```
+
+# Formatting
+
+When editing existing files, follow the existing style, but apply the following style to new code.
+
+
+## Tabs and Spaces
+
+> **Note** Custom rule (based on Google Shell Style Guide and icy/bash-coding-style)
+
+* ✔️ DO: Follow auto-formatting based on EditorConfig. (custom)
+* ✔️ DO: Indent with two spaces. Do not use tabs
+* ✔️ DO: Include blank lines between blocks for readability
+* ✔️ DO: Do not include trailing spaces. (custom)
+* ✔️ DO: Add a newline at the end of the file. (custom)
+* ❌ DO NOT: Do not force the style on existing files. Maintain the style of existing files
+
+EditorConfig will automatically fix indentation, trailing spaces, and newlines at the end of files. Indentation should be two spaces. Under no circumstances should tabs be used.
+
+Many editors cannot switch between actual indentation and displayed spaces/tabs according to user preference. Another person's editor may not have the same settings as yours. Using spaces ensures that code looks the same in any editor.
+
+In existing files, strictly follow the existing indentation. There is no need to force the style on existing files, but if auto-fixes by EditorConfig occur, include those in your commits.
+
+## Line Length and Long Strings
+
+> **Note** Custom rule
+
+* ✔️ DO: Consider using here documents or embedded newlines for excessively long strings
+* ⚠️ CONSIDER: Look for ways to shorten string literals
+
+There is no maximum line length, nor a rule to break lines at N characters. However, if you need to write excessively long strings, consider using here documents or embedded newlines if possible. While the presence of string literals that cannot be appropriately divided is allowed, it is strongly recommended to look for ways to shorten them.
+
+**Recommended**
+
+```shell
+# Use of here document
 cat <<END
 I am an exceptionally long
 string.
 END
 
-# 埋め込み改行
+# Embedded newline
 long_string="I am an exceptionally
 long string."
 
-# 配列の改行
+# Breaking array elements into separate lines
 array=(
   "foo"
   "bar"
@@ -795,62 +743,63 @@ array=(
 )
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 1行に\nを用いて納める。(Slack APIなど事情がある場合はOK)
+# Fitting into one line using \n (acceptable for specific cases like Slack API)
 str="I am an exceptionally long\nstring."
 
-# 配列にならべすぎる
+# Array elements too crowded in one line
 array=("foo" "bar" "baz" "piyo" "okonomi" "oosugiiiiii")
 ```
 
-## パイプライン (Pipelines)
 
-> **Note** 独自規約 (ベース: Googleスタイルガイドとicy/bash-coding-style)
+## Pipelines
 
-* ✔️ DO: パイプライン全体がすっと1行に収まるなら1行で記述します
-* ✔️ DO: パイプライン全体が長く読みにくい場合、1行ごとに分割します
-* ✔️ DO: `|`によるコマンドの連鎖や、`||`や`&&`の論理演算子による連結も同様
+> **Note** Custom rule (based on Google Shell Style Guide and icy/bash-coding-style)
 
-パイプラインは全体が長く読みにくい場合、1行ごとに分割します。もしパイプライン全体がすっと1行に収まるなら1行で記述します。
-改行する場合、後続するパイプセクションのために改行し継続を示す`\`を末尾に付与、2つのスペースでインデントし、パイプを置く形式でパイプセグメントが行ごとに分割します。パイプを末尾において改行しないでください。
-これは`|`によるコマンドの連鎖や、`||`や`&&`の論理演算子による連結にも適用されます。
+* ✔️ DO: Write the entire pipeline on one line if it fits neatly
+* ✔️ DO: Break the pipeline into separate lines if it is long and hard to read
+* ✔️ DO: Apply the same rule to chains of commands with `|`, and logical operators `||` and `&&`
 
-**推奨 (recommended)**
+If a pipeline is long and hard to read, break it into separate lines. If the entire pipeline fits neatly on one line, write it on one line. When breaking lines, indicate continuation for the following pipe sections by adding a `\` at the end of the line, indent by two spaces, and place the pipe at the beginning of the next line. Do not break the line after a pipe.
 
-```bash
-# 1行に全て収まる場合
+This applies to chains of commands using `|`, and logical operators `||` and `&&`.
+
+**Recommended**
+
+```shell
+# If it fits on one line
 command1 | command2
 
-# 長いコマンド
+# Long command
 command1 \
   | command2 \
   | command3 \
   | command4
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
-```bash
-# 1行に全て収まるのに改行は不要
+```shell
+# Unnecessary line break when it fits on one line
 command1 \
   | command2
 
-# 長いコマンドで改行を用いないのは読むのが困難
+# Difficult to read without line breaks
 command1 | command2 | command3 | command4
 ```
 
-## ループ (Loops)
+## Loops
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: `; do`と`; then`は、`while`, `for`そして`if`と同じ行に置きます
-* ✔️ DO: `elif`や`else`は独自の行に置きます
+* ✔️ DO: Place `; do` and `; then` on the same line as `while`, `for`, and `if`
+* ✔️ DO: Place `elif` and `else` on their own lines
 
-シェルのループは少し変わっていますが、関数の宣言時におけるカッコの原則に従い`; then`と`; do`はif/for/whileと同じ行に置きます。`else`は独自の行に置かれるべきであり、閉じ構文も独自の行に置かれるべきです。そしてそれらは開き構文に垂直方向で整列されるべきです。
+Shell loops are a bit different, but following the principle of braces when declaring functions, place `; then` and `; do` on the same line as `if/for/while`. `else` should be placed on its own line, and closing constructs should also be on their own lines. They should be vertically aligned with their opening constructs.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 if [[ nantoka ]]; then
@@ -862,7 +811,7 @@ for i in $(seq 1 10); do
 done
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 if [[ nantoka ]];
@@ -876,18 +825,18 @@ do
 done
 ```
 
-## case文 (Case statement)
+## Case statement
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: 候補は2つのスペースでインデントします
-* ✔️ DO: 1行の候補では、パターンの閉じカッコの後ろ、及び`;;`の前に、1つのスペースが必要です
-* ✔️ DO: 長いもしくは複数コマンドの候補は、パターン、アクション、そして`;;`が複数行に分割します
-* ⚠️ CONSIDER: 短いコマンドの候補は、パターン、アクション、そして`;;`を1行に収めることも検討してください
+* ✔️ DO: Indent cases by two spaces
+* ✔️ DO: For single-line cases, place one space after the closing parenthesis of the pattern and before `;;`
+* ✔️ DO: For long or multiple command cases, split the pattern, action, and `;;` into multiple lines
+* ⚠️ CONSIDER: For short command cases, consider placing the pattern, action, and `;;` on one line if readability is maintained
 
-条件式は`case`や`esac`から1レベルインデントします。複数行のアクションはさらなるレベルにインデントします。パターン表現の前に開きカッコがあってはならない。`;&`や`;;&`の記法は回避します。
+Indent the conditions one level from `case` and `esac`. For multi-line actions, indent an additional level. There should be no opening parentheses before the pattern expression. Avoid using `;&` or `;;&`.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 case "${expression}" in
@@ -901,22 +850,23 @@ case "${expression}" in
 esac
 ```
 
-単純なコマンドは式の可読性が保たれるならば、パターンおよび`;;`と同じ行に配置します。アクションが単一行に収まらない場合、パターンは独自の行に置き、次にアクション、次に`;;`を同様に独自の行に置きます。パターンをアクションと同じ行に配置する場合、パターンの閉じカッコの後ろ、及び`;;`の前に、1つのスペースを入れます。
+For simple commands, place the pattern and `;;` on the same line if readability is maintained. If the action does not fit on a single line, place the pattern on its own line, followed by the action on the next line, and then `;;` on its own line. When placing the pattern on the same line as the action, include one space after the closing parenthesis of the pattern and before `;;`.
 
-## 変数展開 (Variable expansion)
 
-> **Note** Googleスタイルガイド
+## Variable Expansion
 
-* ✔️ DO: 一貫した変数展開します
-* ✔️ DO: 変数展開はダブルクォートで囲みます。シングルクォートでは変数展開されません
-* ❌ DO NOT: 明示的に必要な場合もしくは深刻な混乱を避ける場合を除いて、シェル特殊変数/位置パラメータはブレースで区切るな
+> **Note** Google Shell Style Guide
 
-変数はクォートします。`$var`よりもブレースで囲んだ`${var}`を用います。
-強く推奨されるガイドラインですが、必須のレギュレーションではありません。ただし必須ではないものの、これを軽視しないでください。
+* ✔️ DO: Use consistent variable expansion
+* ✔️ DO: Enclose variable expansions in double quotes. Single quotes do not expand variables
+* ❌ DO NOT: Avoid bracing shell special variables/positional parameters unless explicitly necessary or to avoid serious confusion
 
-その他全ての変数はブレースで区切るのが好ましい。
+Variables should be quoted. Use `${var}` instead of `$var`.
+This is a strongly recommended guideline but not an absolute regulation. However, even though it is not mandatory, do not disregard it.
 
-**推奨 (recommended)**
+All other variables should preferably be enclosed in braces.
+
+**Recommended**
 
 ```shell
 # Preferred style for 'special' variables:
@@ -938,7 +888,7 @@ while read -r f; do
 done < <(find /tmp)
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 # Unquoted vars, unbraced vars, brace-delimited single letter
@@ -951,17 +901,17 @@ set -- a b c
 echo "$10$20$30"
 ```
 
-## クォート (Quoting)
+## Quoting
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: クォートされていない展開が要求される場合や、シェル内部整数である場合を除き、変数、コマンド置換、スペースやシェルのメタ文字を含む文字列は常にクォートします
-* ✔️ DO: 複数の要素を安全にクォートするために配列を利用します。特にコマンドラインフラグの場合。後述の[配列 (Arrays)](#配列-arrays)参照
-* ✔️ DO: 整数として定義されるシェル内部の読み取り専用特殊変数のクォートはオプションです: `$?`, `$#`, `$$`, `$!` (`man bash`参照)。一貫性のため、"${PPID}"のように整数な内部変数はクォートします
-* ✔️ DO: 文字列変数`"${words}"`はクォートします
-* ❌ DO NOT: 整数リテラルはクォートしてはいけません。`$((2 + 2))`のような数値演算はクォートしてはいけません
-* ⚠️ CONSIDER: `[[...]]`中のパターンマッチにおけるクォートの規則に注意を払え。後述の[Test](#test)参照
-* ⚠️ CONSIDER: 単純に引数をメッセージの文字列やログに追記するような特別な理由でないならば、`$*`ではなく`"$@"`を利用します
+* ✔️ DO: Always quote variables, command substitutions, strings containing spaces or shell metacharacters, unless an unquoted expansion is required or the shell internal is an integer
+* ✔️ DO: Use arrays to safely quote multiple elements, especially for command line flags. See [Arrays](#配列-arrays) below
+* ✔️ DO: Quoting shell internal read-only special variables defined as integers is optional: `$?`, `$#`, `$$`, `$!` (see `man bash`). For consistency, quote internal integer variables like "${PPID}"
+* ✔️ DO: Quote string variables like `("${words}")`
+* ❌ DO NOT: Do not quote integer literals. Do not quote arithmetic expressions like `$((2 + 2))`
+* ⚠️ CONSIDER: Pay attention to quoting rules for pattern matching within `[[...]]`. See [Test](#test) below
+* ⚠️ CONSIDER: Use `"$@"` instead of `$*` unless you have a specific reason to concatenate arguments into a string or log message
 
 ```shell
 # 'Single' quotes indicate that no substitution is desired.
@@ -1034,15 +984,15 @@ grep -cP '([Ss]pecial|\|?characters*)$' ${1:+"$1"}
 (set -- 1 "2 two" "3 three tres"; echo $#; set -- "$@"; echo "$#, $@")
 ```
 
-## 関数の宣言 (Function Declaration)
+## Function Declaration
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ❌ DO NOT: 関数と関数の間に実行可能なコードを書くことを避けてください
+* ❌ DO NOT: Avoid writing executable code between function declarations
 
-関数宣言と関数宣言の間に処理を書くとコードの追跡が困難になり、結果デバッグ時に予期せぬ不幸を引き起こします。関数宣言は定数記述部分の直後に配置してください。
+Writing processing code between function declarations makes it difficult to track the code and can lead to unexpected issues during debugging. Place function declarations immediately after the constant declarations section.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 function foo() {
@@ -1052,37 +1002,37 @@ function bar() {
   ...
 }
 
-echo "何か処理"
+echo "Some processing"
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 function foo() {
   ...
 }
 
-echo "何か処理"
+echo "Some processing"
 
 function bar() {
   ...
 }
 ```
 
-# 機能とバグ (Features and Bugs)
+# Features and Bugs
 
-## ShellCheckを使う (Use ShellCheck)
+## Use ShellCheck
 
-> **Note** 独自規約 (ベース: Googleスタイルガイド)
+> **Note** Custom rule (based on Google Shell Style Guide)
 
-* ✔️ DO: ShellCheckを使用してシェルスクリプトのバグを特定します
-* ✔️ DO: ShellCheckの--severityレベルwarning以上をすべて解消させます。(独自)
-* ⚠️ CONSIDER: ShellCheckの--severityレベルinfo以上をすべて解消することを検討します。(独自)
-* ⚠️ CONSIDER: ShellCheckの--severityレベルinfoで解消できない場合`# shellcheck disable=SCXXXX`コメントを付与してignoreを検討します。(独自)
+* ✔️ DO: Use ShellCheck to identify bugs in shell scripts
+* ✔️ DO: Resolve all ShellCheck warnings with a severity level of warning or higher. (custom)
+* ⚠️ CONSIDER: Consider resolving all ShellCheck warnings with a severity level of info or higher. (custom)
+* ⚠️ CONSIDER: If you cannot resolve ShellCheck warnings with a severity level of info, consider adding `# shellcheck disable=SCXXXX` comments to ignore them. (custom)
 
-[ShellCheck](https://www.shellcheck.net/)プロジェクトはシェルスクリプトについての一般的なバグや警告を検出します。シェルスクリプトが大きかろうと小さかろうと全てに適用します。
+The [ShellCheck](https://www.shellcheck.net/) project detects common bugs and warnings in shell scripts. Apply it to all shell scripts, regardless of their size.
 
-shellcheckはWindows/Ubuntu/macOS各種で[インストール](https://github.com/koalaman/shellcheck)できます。
+ShellCheck can be [installed](https://github.com/koalaman/shellcheck) on Windows, Ubuntu, and macOS.
 
 ```shell
 # Debian/Ubuntu
@@ -1094,67 +1044,67 @@ winget install --id koalaman.shellcheck
 scoop install shellcheck
 ```
 
-**推奨 (recommended)**
+**Recommended**
 
-```bash
-# 部分式には$()を用います。
+```
+# Use $() for command substitution.
 foo=$(cmd ...)
 
-# パスのように空白入る可能性がある変数はクォートで囲みます。
+# Enclose variables with potential spaces in quotes.
 ls "/foo/bar/${nanika_file}"
 
-# sourceのパスが解消できないためSC1091の警告無視が必須なので許容される
+# Ignoring SC1091 warning for unresolved source path is acceptable.
 # shellcheck disable=SC1091
 . "$(dirname "${BASH_SOURCE[0]}")/_functions"
 
-# ドライラン用の$_AWS_ARGSを${_AWS_ARGS}にしないことでSC2086がでない。これが許容されるのは、空文字になる可能性、スペース区切りの複数引数になる可能性の両方あるためクォートで囲むことができない
+# Using $_AWS_ARGS without quotes to avoid SC2086. This is acceptable as $_AWS_ARGS may be an empty string or multiple space-separated arguments.
 aws s3 ls foo_bucket $_AWS_ARGS
 
-# ドライラン用の$dryrunを${dryrun}にしないことでSC2086がでない。これが許容されるのは、空文字になる可能性、スペース区切りの複数引数になる可能性の両方あるためクォートで囲むことができない
+# Using $dryrun without quotes to avoid SC2086. This is acceptable as $dryrun may be an empty string or multiple space-separated arguments.
 $dryrun aws s3 ls foo_bucket $_AWS_ARGS
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
-```bash
-# SC2006として検出。部分式に``はスタイルガイド、shellcheck両方で禁止です、修正しましょう。
-foo=`cmd ...`
+```shell
+# Detected as SC2006. Using `` for command substitution is prohibited by both style guides and shellcheck; please correct it.
+foo=$(cmd ...)
 
-# SC2086として検出。パスのように空白入る可能性がある変数はクォートで囲まないと警告が出ます。修正しましょう。
-ls /foo/bar/${nanika_file}
+# Detected as SC2086. Variables that may contain spaces, such as paths, should be enclosed in quotes to avoid warnings. Please correct it.
+ls "/foo/bar/${nanika_file}"
 ```
 
-## コマンド置換 (Command Substitution)
+## Command Substitution
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: backtick \`\` ではなく`$(command)`を使用します
+* ✔️ DO: Use `$(command)` instead of backticks `` ` ` ``
 
-入れ子になった内側のbacktickは`\`によるエスケープが求められますが、`$(command)`の形式なら入れ子になっても変更の必要がなく読みやすさを維持できます。
+Nested backticks require escaping with `\`, but the `$(command)` format maintains readability without needing changes when nested.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 var=$(command "$(command1)")
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 var=`command \`command1\``
 ```
 
-## Test構文 (Test Expression)
+## Test Expression
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: `[ ... ]`ではなく`[[ ... ]]`を使用します
+* ✔️ DO: Use `[[ ... ]]` instead of `[ ... ]`
 
-`[[ ... ]]`は`[ ... ]`, `test`そして`/usr/bin/[`よりも適切です。`[[ ... ]]`は`[[`と`]]`の間でパス名の展開や単語の分割が行われないためエラーを削減します。また、`[[ ... ]]]`は`[...]`とは違い、正規表現マッチングが可能です。
+`[[ ... ]]` is preferred over `[ ... ]`, `test`, and `/usr/bin/[`. The `[[ ... ]]` construct reduces errors as pathname expansion and word splitting do not occur between `[[` and `]]`. Additionally, `[[ ... ]]` supports regular expression matching, unlike `[ ... ]`.
 
-`[]`が引き起こす問題の背景は[詳細ページ](http://tiswww.case.edu/php/chet/bash/FAQ)のE14参照。
+Refer to [FAQ E14](http://tiswww.case.edu/php/chet/bash/FAQ) for issues caused by `[]`.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # This ensures the string on the left is made up of characters in
@@ -1170,7 +1120,7 @@ if [[ "filename" == "f*" ]]; then
 fi
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 # This gives a "too many arguments" error as f* is expanded to the
@@ -1181,21 +1131,21 @@ if [ "filename" == f* ]; then
 fi
 ```
 
-## 文字列のテスト (Testing Strings)
+## Testing Strings
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: 文字列の比較には`==`を使用します
-* ✔️ DO: 数値比較する場合は`(( ... ))`または`-lt`や`-gt`を利用します
-* ⚠️ CONSIDER: 空文字列の比較には`== ""`ではなく`-z`の使用を検討します
-* ⚠️ CONSIDER: 文字列の比較において、固定文字列をプレフィックス/サフィックスにつけて文字列全体の比較をすることは避けましょう
-* ⚠️ CONSIDER: 文字列の比較において、`<`や`>`は辞書的比較するため注意が必要です
-* ❌ DO NOT: 文字列の比較には`=`を使用しません
-* ❌ DO NOT: 数値の比較に`>`や`<`を使用しません
+* ✔️ DO: Use `==` for string comparisons
+* ✔️ DO: Use `(( ... ))` or `-lt` and `-gt` for numeric comparisons
+* ⚠️ CONSIDER: Use `-z` instead of `== ""` for empty string comparisons
+* ⚠️ CONSIDER: Avoid prefixing/suffixing fixed strings for whole string comparison in string comparisons
+* ⚠️ CONSIDER: Be cautious when using `<` or `>` in string comparisons as they perform lexicographical comparisons
+* ❌ DO NOT: Do not use `=` for string comparisons
+* ❌ DO NOT: Do not use `>` or `<` for numeric comparisons
 
-bashはtestで空文字列を十分スマートに扱えます。コードの可読性を考えて、文字列判定を用いてください。比較時に固定文字をプレフィックス/サフィックスにつけて文字列全体の比較をすることは避けましょう。
+Bash handles empty strings efficiently with test. For code readability, use appropriate string checks. Avoid prefixing/suffixing fixed strings for whole string comparison in string comparisons.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # Comparing strings
@@ -1218,15 +1168,15 @@ fi
 **非推奨 (discouraged)**
 
 ```shell
-# Avoid compare the whole string with a additional string
+# Avoid comparing the whole string with an additional string
 if [[ "${my_var}X" == "some_stringX" ]]; then
   do_something
 fi
 ```
 
-何をテストしているかの混乱を避けるため、明示的に`-z`や`-n`を利用します。
+To avoid confusion about what is being tested, explicitly use `-z` or `-n`.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 if [[ -n "${my_var}" ]]; then
@@ -1234,7 +1184,7 @@ if [[ -n "${my_var}" ]]; then
 fi
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 if [[ "${my_var}" ]]; then
@@ -1242,57 +1192,57 @@ if [[ "${my_var}" ]]; then
 fi
 ```
 
-同値判定には`==`を利用し`=`は利用しません。前者は`[[`の利用を強制し、後者は代入と紛らわしくなります。ただし、`[[ ... ]]`の中での`<`と`>`は辞書的比較するため注意が必要です。数値比較する場合は`(( ... ))`または`-lt`や`-gt`を利用します。
+Use `==` for equality checks and avoid `=`. The former enforces the use of `[[`, while the latter can be confused with assignment. However, be cautious that `<` and `>` within `[[ ... ]]` perform lexicographical comparisons. For numeric comparisons, use `(( ... ))` or `-lt` and `-gt`.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# == を用いる
+# Use ==
 if [[ "${my_var}" == "val" ]]; then
   do_something
 fi
 
-# (())を用いる
+# Use (())
 if (( my_var > 3 )); then
   do_something
 fi
 
-# 数値比較は-gtや-ltが適切
+# Use -gt or -lt for numeric comparisons
 if [[ "${my_var}" -gt 3 ]]; then
   do_something
 fi
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# = は使わない
+# Do not use =
 if [[ "${my_var}" = "val" ]]; then
   do_something
 fi
 
-# 恐らく意図しない辞書的比較
+# Likely unintended lexicographical comparison
 if [[ "${my_var}" > 3 ]]; then
-  # 4ならば真、22ならば偽
+  # True if "4", false if "22"
   do_something
 fi
 ```
 
-## ファイル名のワイルドカード展開 (Wildcard Expansion of Filenames)
+## Wildcard Expansion of Filenames
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: ファイル名のワイルドカード展開する場合は明示的なパス指定を行います
-* ❌ DO NOT: ファイル名のワイルドカード展開する場合は`*`を使用しないでください。代わりに`./*`を使用します
+* ✔️ DO: Use explicit paths when performing wildcard expansion of filenames
+* ❌ DO NOT: Do not use `*` for wildcard expansion of filenames. Instead, use `./*`
 
-ファイル名は`-`から始まる可能性があるため、ワイルドカード展開は`*`ではなく`./*`の方がより安全です。
+Filenames may start with `-`, so using `./*` for wildcard expansion is safer than using `*`.
 
-```bash
+```shell
 # Here's the contents of the directory:
 # -f  -r  somedir  somefile
 ```
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # Prevent the accidental removal of files starting with `-`
@@ -1303,7 +1253,7 @@ rm: cannot remove `./somedir': Is a directory
 removed `./somefile'
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 # Incorrectly deletes almost everything in the directory by force
@@ -1314,13 +1264,13 @@ removed `somefile'
 
 ## Evalの禁止 (Eval is Evil)
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ❌ DO NOT: `eval`は使わないでください
+* ❌ DO NOT: Do not use `eval`
 
-`eval`は変数への代入に利用される場合、入力コードを難読化し、それらの変数が何であるかの確認を可能にすることなく変数を設定できます。`eval`はセキュリティリスクを伴うため、避けるべきです。
+`eval` obscures input code when used for variable assignments, setting variables without allowing confirmation of what they are. `eval` poses a security risk and should be avoided.
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 # What does this set?
@@ -1333,18 +1283,17 @@ variable="$(eval some_function)"
 
 ## 配列 (Arrays)
 
-> **Note** Googleスタイルガイド
+> **Note** Google Shell Style Guide
 
-* ✔️ DO: 配列を利用して複数の要素を格納します
-* ✔️ DO: 改行で区切られた文字列出力は素直にループを利用することを検討してください。配列に変換するよりも簡単です
-* ❌ DO NOT: 単一文字列に複数の要素を格納、連携することは避けます
+* ✔️ DO: Use arrays to store multiple elements
+* ✔️ DO: Consider using loops for newline-separated string output. It's simpler than converting to an array
+* ❌ DO NOT: Avoid storing multiple elements in a single string
 
-bashの配列は、クォートの複雑さを回避して要素のリストを保存するのに使います。配列はより複雑なデータ構造の利用を容易にするため利用されるべきではありません。(前述の[いつシェルを使うか (When to use Shell)](#いつシェルを使うか-when-to-use-shell)参照)
+Bash arrays are used to store lists of elements, avoiding the complexity of quoting. Arrays should not be used to facilitate more complex data structures. (See [いつシェルを使うか (When to use Shell)](#いつシェルを使うか-when-to-use-shell) above.)
 
-配列は文字列の順序付きコレクションを格納し、コマンドやループに対しては個々の要素に安全に展開されます。
-単一文字列をコマンドへの複数の引数として利用すると、必然的に`eval`や文字列中のクォートの入れ子を誘発するため避けます。
+Arrays store ordered collections of strings and are safely expanded to individual elements for commands and loops. Using a single string for multiple command arguments can lead to the use of `eval` or nested quotes within strings, which should be avoided.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # An array is assigned using parentheses, and can be appended to
@@ -1355,7 +1304,7 @@ flags+=(--greeting="Hello ${name}")
 mybinary "${flags[@]}"
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 # Don’t use strings for sequences.
@@ -1371,8 +1320,8 @@ mybinary ${flags}
 # characters or whitespace.
 
 # This expands the listing output into a string, then does special keyword
-# expansion, and then whitespace splitting.  Only then is it turned into a
-# list of words.  The ls command may also change behavior based on the user's
+# expansion, and then whitespace splitting. Only then is it turned into a
+# list of words. The ls command may also change behavior based on the user's
 # active environment!
 declare -a files=($(ls /directory))
 
@@ -1381,35 +1330,35 @@ declare -a files=($(ls /directory))
 mybinary $(get_arguments)
 ```
 
-**配列の利点**
+**Advantages of Arrays**
 
-* 配列の利用はクォートを錯乱させることなくリストの作成を可能にします。逆に、配列を利用しなければ、文字列中でクォートを入れ子にする誤った試みへつながります
-* 配列は、スペースを含む任意の文字列からなるシーケンス/リストの安全な保存を可能にします
+* Using arrays allows for creating lists without confusing quotes. On the other hand, without arrays, you might end up making incorrect attempts to nest quotes within strings
+* Arrays enable safe storage of sequences/lists consisting of any string with spaces
 
-**配列の欠点**
+**Disadvantages of Arrays**
 
-* 配列の利用によりスクリプトはより複雑になる可能性があります
-* 改行で区切られた文字列出力は配列に変換するためには追加の処理が必要です。変換するよりも素直にループを利用することを検討してください
+* Using arrays can make the script more complex
+* Additional processing is needed to convert newline-separated string output into arrays. Consider using loops directly instead of conversion
 
 ```shell
-# 改行で区切られた文字列出力を配列に変換する
+# Convert newline-separated string output to an array
 IFS=$'\n' read -r -d '' -a files < <(ls /directory && printf '\0')
 ```
 
-配列はリストを安全に作成したり渡したりする場合に利用します。特に、コマンド引数のセットを構築する時のように、クォートが錯乱する問題を避ける場合に利用します。配列にアクセスするときはクォート展開`"${array[@]}"`を利用します。しかしながら、もしさらに高度なデータ操作が要求される場合は、そもそもシェルスクリプトの利用は避けましょう。
+Arrays are used when safely creating or passing lists, especially to avoid issues with confusing quotes when constructing sets of command arguments. When accessing arrays, use quoted expansion `"${array[@]}"`. However, if more advanced data manipulation is required, consider avoiding shell scripting altogether.
 
-## whileへのパイプ (Pipes to While)
+## Pipes to While
 
-> **Note** Googleスタイルガイド
+> **Note** Google Style Guide
 
-* ✔️ DO: プロセス置換か`readarray`ビルトイン(bash4+)を使用して`while`へパイプします
-* ❌ DO NOT: `| while`を使用して`while`へパイプしてループすることは避けます
+* ✔️ DO: Use process substitution or the `readarray` builtin (bash4+) to pipe into `while`
+* ❌ DO NOT: Avoid piping into `while` using `|` as it may lead to hard-to-trace bugs
 
-`while`へパイプする場合はプロセス置換か`readarray`ビルトイン (bash4+) を優先的に利用します。プロセス置換はサブシェルを作成しますが、`while`やその他のコマンドをサブシェル内に置くことなくサブシェルから`while`へのリダイレクトを可能にします。一方、パイプはサブシェルを作るためパイプライン中における変数の変更は親シェルに伝播せず、`| while`を用いると追いかけるのが困難な分かりにくいバグを誘引します。
+When piping into `while`, prioritize using process substitution or the `readarray` builtin (bash4+). Process substitution creates a subshell but allows redirection to `while` without placing `while` or other commands inside the subshell. On the other hand, piping creates a subshell, and variable changes within the pipeline do not propagate to the parent shell, potentially leading to obscure bugs that are difficult to track.
 
-代わりに`readarray`組み込み関数を使用してファイルを配列に読み込み、配列の内容をループすることを検討してください。(上記と同じ理由で)`readarray`に代入するときはパイプではなくプロセス置換を使用する必要があることに注意してください。ただし、ループの入力生成がパイプの後ではなく前に配置されるという利点があります。
+Alternatively, use the readarray builtin to read the file into an array, then loop over the array’s contents. Notice that (for the same reason as above) you need to use a process substitution with readarray rather than a pipe, but with the advantage that the input generation for the loop is located before it, rather than after.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # readarray is most recommended
@@ -1438,7 +1387,7 @@ done < <(ls)
 echo "${last_line}"
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 # Pipe won't pass variable changes to outside
@@ -1453,67 +1402,66 @@ done
 echo "${last_line}"
 ```
 
-## forループ (For Loops)
+## For Loops
 
-> **Note** Googleスタイルガイド
+> **Note** Google Style Guide
 
-* ✔️ DO: スペースを含ないことが確実な場合、`for`ループを使用してリストをイテレートします
-* ✔️ DO: `for`ループを使用してリストをイテレートする場合、`"${array[@]}"`を使用します。この時変数は、配列か改行で区切られた文字列であることを確認してください
+* ✔️ DO: Use `for` loops to iterate over lists when you are certain there are no spaces
+* ✔️ DO: When using `for` loops to iterate over lists, use `"${array[@]}"`. Ensure the variable is either an array or a newline-separated string
 
-forループでイテレートする際は注意が必要です。`for var in $(...)`では、出力は行ではなくスペースで分割します。出力が想定外のスペースを含ないことが分かっているため場合安全ですが、明確でない場合は`while read`ループか`readarray`の方が安全で明確になるでしょう。forループを使用してリストをイテレートする場合、`"${array[@]}"`を使用することでクォート規約を遵守します。
+Care must be taken when iterating with `for` loops. `for var in $(...)` splits output by spaces, not by lines. This is safe if you are sure the output does not contain unexpected spaces, but `while read` loops or `readarray` may be safer and clearer if the situation is ambiguous. When iterating over a list with `for`, using `"${array[@]}"` ensures compliance with quoting conventions.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# use array when itelating space separeted list. (You cannot itelate with string "foo bar piyo")
+# use array when iterating space-separated list. (You cannot iterate with string "foo bar piyo")
 lines=(foo bar piyo)
 for line in "${lines[@]}"; do
   echo "1 ${line}"
 done
 
-# use array when itelating line separated outout
+# use array when iterating line-separated output
 lines=$(ls -l)
 for line in "${lines[@]}"; do
   echo "1 ${line}"
 done
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# shellckeck warn you SC2206 for quote this
+# shellcheck warns you SC2206 for quoting this
 lines="foo bar piyo"
 for line in ${lines[@]}; do
   echo "1 ${line}"
 done
 
-# Won't work. output is `1 foo bar piyo`
+# Won't work. Output is `1 foo bar piyo`
 lines="foo bar piyo"
 for line in "${lines[@]}"; do
   echo "1 ${line}"
 done
 
-# space included lines won't itelate correctly
+# Space-included lines won't iterate correctly
 for line in $(ls -l); do
   echo "1 ${line}"
 done
 ```
 
-## 算術演算 (Arithmetic)
+## Arithmetic
 
-> **Note** Googleスタイルガイド
+> **Note** Google Style Guide
 
-* ✔️ DO: 算術演算には`(( ... ))`や`$(( ... ))`を利用します
-* ❌ DO NOT: `$[]`構文、`let`や`expr`を使用して算術演算しないでください
-* ⚠️ CONSIDER: `(( ... ))`を独立した文として利用することは避けてください。代わりに、`if (( ... ))`のように条件式として利用してください
-* ⚠️ CONSIDER: `(( ... ))`や`$(( ... ))`内部では変数を`i`のように`$`や`${}`を省略できます
+* ✔️ DO: Use `(( ... ))` or `$(( ... ))` for arithmetic operations
+* ❌ DO NOT: Avoid using `$[]` syntax, `let`, or `expr` for arithmetic operations
+* ⚠️ CONSIDER: Avoid using `(( ... ))` as a standalone statement. Instead, use it in conditional expressions like `if (( ... ))`
+* ⚠️ CONSIDER: Inside `(( ... ))` or `$(( ... ))`, you can omit the `$` or `${}` when referring to variables, e.g., `i` instead of `$i`
 
-`<`と`>`は`[[ ... ]]`式内部では数値比較として動作せず辞書的比較します。([文字列のテスト (Testing Strings)](#文字列のテスト-testing-strings)参照)。代わりに全ての算術演算に対しては`[[ ... ]]`ではなく、`(( ... ))`を優先的に利用してください。
+The operators `<` and `>` do not perform numeric comparison within `[[ ... ]]` expressions but rather perform lexicographic comparison. (Refer to [Testing Strings](#testing-strings) for details). Therefore, prefer using `(( ... ))` for all arithmetic operations instead of `[[ ... ]]`.
 
-`(( ... ))`を独立した文として利用する場合、その式がゼロと評価されるか注意が必要なため避けてください。特に`set -e`が有効な場合、`set -e; i=0; (( i++ ))`はシェルを終了させてしまいます。
-文法的考慮点を差し置いても、シェルビルトインの算術演算`(())`は多くの場合`expr`よりも高速です。
+Be cautious with `(( ... ))` as a standalone statement, as it might evaluate to zero and cause issues, especially with `set -e`. For example, `set -e; i=0; (( i++ ))` will terminate the shell. Despite this, arithmetic operations with the shell builtin `(( ... ))` are often faster than `expr`.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # Simple calculation used as text - note the use of $(( … )) within a string.
@@ -1528,24 +1476,24 @@ fi
 (( i = 10 * j + 400 ))
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 # This form is non-portable and deprecated
 i=$[2 * 10]
 
 # Despite appearances, 'let' isn't one of the declarative keywords,
-# so unquoted assignments are subject to globbing wordsplitting.
+# so unquoted assignments are subject to globbing word splitting.
 # For the sake of simplicity, avoid 'let' and use (( … ))
 let i="2 + 2"
 
 # The expr utility is an external program and not a shell builtin.
 i=$( expr 4 + 4 )
 
-# Quoting can be error prone when using expr too.
+# Quoting can be error-prone when using expr too.
 i=$( expr 4 '*' 4 )
 
-# シェルが終了してしまう
+# Shell will terminate
 set -e
 i=0
 (( i++ ))
@@ -1553,7 +1501,7 @@ i=0
 
 `$(())`で変数を利用する場合、シェルが`var`を変数と認識するため、`${var}`や`$var`は不要です。`${...}`を省略することで読みやすくなるため推奨しますが、この規約は先述のクォート規約と反するため必須ではありません。
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 # N.B.: Remember to declare your variables as integers when
@@ -1578,53 +1526,52 @@ sec=30
 echo "$(( hr * 3600 + min * 60 + sec ))" # prints 7530 as expected
 ```
 
-# コマンド呼び出し (Calling Commands)
+# Calling Commands
 
-## 返り値判定 (Checking Return Values)
+## Checking Return Values
 
-> **Note** Googleスタイルガイド
+> **Note** Google Style Guide
 
-* ✔️ DO: 返り値は常に判定し、有益な返り値を与えます
-* ✔️ DO: コマンドの成否で処理を分ける場合、`if`文で直接判定します
-* ❌ DO NOT: `set -euo pipefail`が前提にあるため、`$?`や`PIPESTATUS`変数による返り値判定は避けます
+* ✔️ DO: Always check return values and provide useful return values
+* ✔️ DO: When handling command success or failure, directly check with `if` statements
+* ❌ DO NOT: Avoid checking return values with `$?` or `PIPESTATUS` variables, as `set -euo pipefail` is assumed
 
-
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# ifの中ならコマンドが失敗してもよい
+# It's okay if the command fails within the if statement
 if ! mv "${file_list[@]}" "${dest_dir}/"; then
   echo "Unable to move ${file_list[*]} to ${dest_dir}" >&2
   exit 1
 fi
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# set -euo pipefailなのでmvが失敗した場合、スクリプトは終了する
+# With set -euo pipefail, the script will exit if mv fails
 mv "${file_list[@]}" "${dest_dir}/"
 if (( $? != 0 )); then
   echo "Unable to move ${file_list[*]} to ${dest_dir}" >&2
   exit 1
 fi
 
-# set -euo pipefailなので、PIPESTATUSは使わない。パイプライン全体でのエラーを判定する。
+# With set -euo pipefail, do not use PIPESTATUS. Use it to check errors in the entire pipeline.
 tar -cf - ./* | (cd "${dir}" && tar -xf -)
 if (( PIPESTATUS[0] != 0 || PIPESTATUS[1] != 0 )); then
   echo "Unable to tar files to ${dir}" >&2
 fi
 ```
 
-## エラー処理 (Error Handling)
+## Error Handling
 
-> **Note** icy/bash-coding-styleベース
+> **Note** Based on icy/bash-coding-style
 
-* ✔️ DO: 関数内で発生するエラーは関数で処理をします。呼び出し元でエラー処理は避けます
+* ✔️ DO: Handle errors that occur within a function inside that function. Avoid error handling at the caller level
 
-別関数で発生したエラーを呼び出し元で処理することは避けます。関数内でエラーが発生した場合、その関数内でエラー処理を行います。エラー処理は`common::error`関数を用いてエラーメッセージを表示し、`return 1`で関数を終了します。
+Avoid handling errors from other functions at the caller level. If an error occurs within a function, handle it within that function. Use the `common::error` function to display error messages and end the function with `return 1`.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
 _foobar_call() {
@@ -1640,7 +1587,7 @@ _my_def() {
 }
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 _my_def() {
@@ -1654,87 +1601,87 @@ _my_def() {
 }
 ```
 
-## ビルトインコマンド vs 外部コマンド (Builtin Commands vs. External Commands)
+## Builtin Commands vs. External Commands
 
-> **Note** Googleスタイルガイド
+> **Note** Google Style Guide
 
-* ✔️ DO: シェルビルトイン呼び出しか分離プロセス呼び出しかの選択を迫られたら、ビルトインを選択します
-* ❌ DO NOT: bashの変数展開を複雑に駆使するのとsedなど標準的な外部コマンドでシンプルにかける場合、ビルトインコマンドに固執するのは避けてください
+* ✔️ DO: Choose builtins over external commands when given the choice between a shell builtin call and an external process call
+* ❌ DO NOT: Avoid sticking to builtins if using external commands like `sed` simplifies the task despite complex variable expansions in bash
 
-シェルビルトインは、外部コマンドと比べて堅牢かつポータル(例えば`sed`はBSDとGNUで異なる)であるため、bash(1)にある変数展開機能のようなビルトインの利用は適切です。しかしながら、外部コマンドの標準的な利用がシンプルである場合、ビルトインコマンドに固執する必要はありません。特に複雑な変数展開を用いると他の開発者がコードを理解するのに時間を要する可能性があります。
+Shell builtins are generally more robust and portable compared to external commands (e.g., `sed` varies between BSD and GNU), so using builtins like those in bash (e.g., variable expansions) is appropriate. However, if using external commands is simpler and more standard, there is no need to stick to builtins. Overly complex variable expansions can make the code harder for others to understand.
 
-**推奨 (recommended)**
+**Recommended**
 
-```bash
+```shell
 addition=$(( X + Y ))
 substitution="${string/#foo/bar}"
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
 addition="$(expr "${X}" + "${Y}")"
 substitution="$(echo "${string}" | sed -e 's/^foo/bar/')"
 ```
 
-# スクリプトの安定化 (Script Stabilization)
+# Script Stabilization
 
-スタイルガイドを守ってもスクリプトの安定化は約束できません。よくあるスクリプトの安定化にのためのベストプラクティスを示します。
+Following style guides alone cannot guarantee script stabilization. Here are some best practices for stabilizing scripts.
 
 
-## 再実行可能なスクリプトを書く (Writing Rerunnable Scripts)
+## Writing Rerunnable Scripts
 
-> **Note** 独自規約
+> **Note** Custom Guidelines
 
-* ✔️ DO: スクリプトを同じ引数で実行したときに同じ結果が得られるようにします
+* ✔️ DO: Ensure that running the script with the same arguments yields the same results
 
-冪等性のあるコードを書くことは重要です。冪等性=スクリプトを何度実行しても同じ結果が得られため、スクリプトの途中で処理が失敗した場合でも再実行により続きから処理を行えるようになります。冪等性を意識することで、より信頼性の高い、メンテナンスしやすいスクリプトを作成できます。
+Writing idempotent code is important. Idempotency means that running the script multiple times will yield the same result, allowing you to continue processing from where it left off if the script fails midway. By focusing on idempotency, you create more reliable and maintainable scripts.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# このスクリプトは冪等性がある
-name="実行ごとに渡すID/ファイル名"
+# This script is idempotent
+name="ID/filename to be passed each time"
 mkdir -p "$(dirname "${name}")"
 if [[ ! -f "${name}" ]]; then
-  # ファイルがあってもなくてもコンテンツが初期化されてから追記される
+  # Content is initialized and appended regardless of whether the file exists or not
   echo "nanika" > "${name}"
   echo "okonomiyaki" >> "${name}"
   echo "takoyaki" >> "${name}"
 fi
 
-# kubectl applyは再実行性があるコマンドなので活用する
+# kubectl apply is an idempotent command and should be used
 kubectl apply -f ./manifest.yaml
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 初回にディレクトリの存在があっても次にある可能性が保証されていない
-name="実行ごとに渡すID/ファイル名"
+# The existence of the directory on the first run does not guarantee its presence in subsequent runs
+name="ID/filename to be passed each time"
 if [[ ! -f "${name}" ]]; then
-  # 前のファイルがあると追記されて同じ結果にならない
+  # Appending to an existing file will not yield the same result
   echo "nanika" >> "${name}"
   echo "okonomiyaki" >> "${name}"
   echo "takoyaki" >> "${name}"
 fi
 
-# kubectl createは再実行性が担保されていないのですでに存在するとエラーになる
+# kubectl create is not idempotent and will result in an error if the resource already exists
 kubectl create nanika
 ```
 
-## 変更前に状態の確認を行う (Check State Before Changing)
+## Check State Before Changing
 
-> **Note** 独自規約
+> **Note** Custom Guidelines
 
-* ✔️ DO: 変更前に状態を確認し意図したコマンドが実行されることを担保します
+* ✔️ DO: Check the state before making changes to ensure that the intended command is executed
 
-システムの状態を変更する操作する場合、すでに目的の状態になっているかどうかを最初にチェックすることで、不要な処理を避けエラーを防ぎます。
+When performing operations that modify the system state, checking whether the desired state is already achieved helps avoid unnecessary processing and prevent errors.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# 変数が空かどうかチェックしてから処理を行う
+# Check if the variable is empty before proceeding
 if [[ "${kubemanifest}" == "" ]]; then
   common::error "kubernetes manifest not generated. exit script."
   exit 1
@@ -1743,42 +1690,42 @@ fi
 echo "${kubemanifest}" | kubectl apply -f -
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 何もチェックせずに処理を行う。kubemanifestが空の場合、意図しない結果になる
+# Performing operations without any checks. If kubemanifest is empty, it will lead to unintended results
 echo "${kubemanifest}" | kubectl apply -f -
 ```
 
-## 一時ファイルの安全な作成 (Safely Creating Temporary Files)
+## Safely Creating Temporary Files
 
-> **Note** 独自規約
+> **Note** Custom Guidelines
 
-* ✔️ DO: 一時ファイルの作成には`mktemp`を使用します
-* ⚠️ CONSIDER: スクリプト終了時には`trap`を使用して確実に削除できないか検討します
+* ✔️ DO: Use `mktemp` to create temporary files safely
+* ⚠️ CONSIDER: Use `trap` to ensure that temporary files are deleted when the script exits
 
-mktempを使用することで、安全に一時ファイルを作成でき、trapを使用することでスクリプト終了時に確実に削除できます。
+Using `mktemp` ensures that temporary files are created safely, and `trap` can be used to ensure they are deleted when the script exits.
 
-**推奨 (recommended)**
+**Recommended**
 
 ```shell
-# mktemp を使用して安全に一時ファイルを作成
+# Create a temporary file safely using mktemp
 temp_file=$(mktemp)
 
-# スクリプトの終了時に一時ファイルを削除
+# Delete the temporary file on script exit
 trap 'rm -f "$temp_file"' EXIT
 
-# 一時ファイルを使用した処理が安全にかける
+# Perform operations using the temporary file safely
 ```
 
-**非推奨 (discouraged)**
+**Discouraged**
 
 ```shell
-# 独自ルールの一時ファイル作成は重複を考慮するのが難しい
+# Creating temporary files with custom rules can be prone to duplication issues
 temp_file=$(/tmp/foobar_$(date +%s))
 
-# 一時ファイルを使用した処理をここに記述
+# Perform operations using the temporary file here
 
-# ファイルの削除漏れが発生する可能性がある
+# There is a risk of missing file deletion
 rm "${temp_file}"
 ```
