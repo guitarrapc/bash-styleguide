@@ -1697,13 +1697,13 @@ Writing idempotent code is important. Idempotency means that running the script 
 
 ```shell
 # This script is idempotent
-name="ID/filename to be passed each time"
-mkdir -p "$(dirname "${name}")"
-if [[ ! -f "${name}" ]]; then
+file_name="foo_bar/per_run_unique_$(date +%s)"
+mkdir -p "$(dirname "${file_name}")"
+if [[ ! -f "${file_name}" ]]; then
   # Content is initialized and appended regardless of whether the file exists or not
-  echo "nanika" > "${name}"
-  echo "okonomiyaki" >> "${name}"
-  echo "takoyaki" >> "${name}"
+  echo "nanika" > "${file_name}"
+  echo "okonomiyaki" >> "${file_name}"
+  echo "takoyaki" >> "${file_name}"
 fi
 
 # kubectl apply is an idempotent command and should be used
@@ -1714,12 +1714,12 @@ kubectl apply -f ./manifest.yaml
 
 ```shell
 # The existence of the directory on the first run does not guarantee its presence in subsequent runs
-name="ID/filename to be passed each time"
-if [[ ! -f "${name}" ]]; then
+file_name="foo_bar/per_run_unique_$(date +%s)"
+if [[ ! -f "${file_name}" ]]; then
   # Appending to an existing file will not yield the same result
-  echo "nanika" >> "${name}"
-  echo "okonomiyaki" >> "${name}"
-  echo "takoyaki" >> "${name}"
+  echo "nanika" >> "${file_name}"
+  echo "okonomiyaki" >> "${file_name}"
+  echo "takoyaki" >> "${file_name}"
 fi
 
 # kubectl create is not idempotent and will result in an error if the resource already exists
