@@ -1696,13 +1696,13 @@ substitution="$(echo "${string}" | sed -e 's/^foo/bar/')"
 
 ```shell
 # このスクリプトは冪等性がある
-name="実行ごとに渡すID/ファイル名"
+file_name="foo_bar/per_run_unique_$(date +%s)"
 mkdir -p "$(dirname "${name}")"
 if [[ ! -f "${name}" ]]; then
   # ファイルがあってもなくてもコンテンツが初期化されてから追記される
-  echo "nanika" > "${name}"
-  echo "okonomiyaki" >> "${name}"
-  echo "takoyaki" >> "${name}"
+  echo "nanika" > "${file_name}"
+  echo "okonomiyaki" >> "${file_name}"
+  echo "takoyaki" >> "${file_name}"
 fi
 
 # kubectl applyは再実行性があるコマンドなので活用する
@@ -1713,12 +1713,12 @@ kubectl apply -f ./manifest.yaml
 
 ```shell
 # 初回にディレクトリの存在があっても次にある可能性が保証されていない
-name="実行ごとに渡すID/ファイル名"
-if [[ ! -f "${name}" ]]; then
+file_name="foo_bar/per_run_unique_$(date +%s)"
+if [[ ! -f "${file_name}" ]]; then
   # 前のファイルがあると追記されて同じ結果にならない
-  echo "nanika" >> "${name}"
-  echo "okonomiyaki" >> "${name}"
-  echo "takoyaki" >> "${name}"
+  echo "nanika" >> "${file_name}"
+  echo "okonomiyaki" >> "${file_name}"
+  echo "takoyaki" >> "${file_name}"
 fi
 
 # kubectl createは再実行性が担保されていないのですでに存在するとエラーになる
