@@ -732,7 +732,7 @@ Files should start with a description of their content. All files should include
 Comment on parts of the code that are tricky, not immediately obvious, interesting, or important. However, do not comment on everything. Add comments when there are complex algorithms or when doing something unusual. If a short comment cannot provide a clear explanation, include detailed background information.
 
 
-## TODO コメント (TODO Comments)
+## TODO Comments
 
 > **Note** Custom rule (based on Google Shell Style Guide)
 
