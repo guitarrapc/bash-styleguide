@@ -132,7 +132,7 @@ When writing scripts, ensure they follow the script structure and have no shellc
 * ✔️ DO: Use `set -euo pipefail` for shell option settings. (custom)
 * ⚠️ CONSIDER: If using other shells, explain the reason in comments. (custom)
 
-Use Bash. Executable files should start with `#!/bin/bash` and minimal flags. Restricting all executable shell scripts to `bash` ensures a consistent shell installed on all machines. The only exception to this rule is when required by the coding target. For example, Solaris SVR4 packages require plain Bourne shell for any scripts, thus using `/bin/sh`.
+Use Bash. Executable files should start with `#!/bin/bash` and minimal flags. Restricting all executable shell scripts to `bash` ensures a consistent shell installed on all machines. The only exception to this rule is when required by the coding target. For example, Alpine's default shell is ash, thus using `/bin/sh`.
 
 Using `set` for shell option settings ensures that even if the script is called with `bash script_name`, its functionality is not impaired. `set -euo pipefail` automatically detects errors early and terminates the script if an error occurs. `set -e` terminates the script if an error occurs. `set -u` triggers an error when referencing undefined variables. `set -o pipefail` terminates the script if an error occurs in the middle of a pipeline.
 
@@ -221,13 +221,13 @@ functions.sh
 
 SUID and SGID are prohibited in shell scripts. Shell has many security issues, making it nearly impossible to ensure sufficient safety to allow SUID/SGID. Although bash makes SUID execution difficult, it is possible on some platforms, so it is explicitly prohibited. If privilege escalation is needed, use `sudo`.
 
-As long as scripts are executed in GitHub Actions, sudo, SUID, and SGID are unnecessary and therefore prohibited.
+As long as scripts are executed in GitHub Actions, `sudo`, SUID, and SGID are unnecessary and therefore prohibited.
 
 **Recommended**
 
 ```shell
-# Use sudo when calling
-sudo foo.sh
+# Use sudo when calling (Except in GitHub Actions)
+sudo ./foo.sh
 ```
 
 **Discouraged**
@@ -251,13 +251,13 @@ Avoid executing scripts directly. By invoking scripts through `bash`, you ensure
 **Recommended**
 
 ```shell
-bash foo.sh
+bash ./foo.sh
 
 # Quotes can be omitted if there is no possibility of spaces
-bash foo.sh --baz true
+bash ./foo.sh --baz true
 
 # Enclosing in quotes makes it safe even if there are spaces
-bash foo.sh --foo "hello world" --bar "$bar"
+bash ./foo.sh --foo "hello world" --bar "$bar"
 ```
 
 **Discouraged**
