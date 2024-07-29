@@ -33,7 +33,7 @@ When in doubt, prioritize consistency. By using a single style consistently thro
 - [Comments](#comments)
   - [File Header](#file-header)
   - [Implementation Comments](#implementation-comments)
-  - [TODO コメント (TODO Comments)](#todo-%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88-todo-comments)
+  - [TODO Comments](#todo-comments)
 - [Formatting](#formatting)
   - [Tabs and Spaces](#tabs-and-spaces)
   - [Line Length and Long Strings](#line-length-and-long-strings)
