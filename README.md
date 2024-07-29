@@ -4,8 +4,64 @@
 
 迷ったときは、一貫性を最優先に決定してください。コードベース全体で1つのスタイルを一貫して使用することで、他の (より重要な) 問題に集中できます。一貫性があれば、自動化も可能になります。多くの場合、「一貫性を保つ」というルールは、「1つだけ選択して、それについて心配するのをやめる」ということになります。これらの点について柔軟性を許可する潜在的な価値は、人々がそれについて議論するコストを上回ります。ただし、一貫性には限界があります。一貫性は、明確な技術的議論や長期的な方向性がない場合に良い決着をつける要因となります。一方で、一貫性をもって、新しいスタイルの利点や、コードベースが古いスタイルのまま物事を進める正当化理由に用いられるべきではありません。
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+# Table of Contents
+
+- [はじめに (Introduction)](#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB-introduction)
+  - [自動化支援 (Automation Support)](#%E8%87%AA%E5%8B%95%E5%8C%96%E6%94%AF%E6%8F%B4-automation-support)
+  - [スタイルガイドでどう変わる (How the Style Guide Changes)](#%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%82%AC%E3%82%A4%E3%83%89%E3%81%A7%E3%81%A9%E3%81%86%E5%A4%89%E3%82%8F%E3%82%8B-how-the-style-guide-changes)
+- [背景 (Background)](#%E8%83%8C%E6%99%AF-background)
+  - [どのシェルを使うか (Which Shell to Use)](#%E3%81%A9%E3%81%AE%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%92%E4%BD%BF%E3%81%86%E3%81%8B-which-shell-to-use)
+  - [いつシェルを使うか (When to use Shell)](#%E3%81%84%E3%81%A4%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%92%E4%BD%BF%E3%81%86%E3%81%8B-when-to-use-shell)
+  - [シェルの実行環境 (Shell Execution Environment)](#%E3%82%B7%E3%82%A7%E3%83%AB%E3%81%AE%E5%AE%9F%E8%A1%8C%E7%92%B0%E5%A2%83-shell-execution-environment)
+- [シェルファイルとインタプリタ呼出 (Shell Files and Interpreter Invocation)](#%E3%82%B7%E3%82%A7%E3%83%AB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%A8%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%97%E3%83%AA%E3%82%BF%E5%91%BC%E5%87%BA-shell-files-and-interpreter-invocation)
+  - [ファイル拡張子 (File Extensions)](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%8B%A1%E5%BC%B5%E5%AD%90-file-extensions)
+  - [SUID/SGID](#suidsgid)
+- [環境 (Environment)](#%E7%92%B0%E5%A2%83-environment)
+  - [スクリプトの呼び出し (Script Invocation)](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AE%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%97-script-invocation)
+  - [共通関数スクリプト (Common Function Scripts)](#%E5%85%B1%E9%80%9A%E9%96%A2%E6%95%B0%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88-common-function-scripts)
+  - [スクリプトの引数制御 (Script Argument Control)](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AE%E5%BC%95%E6%95%B0%E5%88%B6%E5%BE%A1-script-argument-control)
+  - [デバッグモードとドライランモード (Debug and Dry-run Mode)](#%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E3%83%A2%E3%83%BC%E3%83%89%E3%81%A8%E3%83%89%E3%83%A9%E3%82%A4%E3%83%A9%E3%83%B3%E3%83%A2%E3%83%BC%E3%83%89-debug-and-dry-run-mode)
+  - [ローカルで実行可能にする (Make It Executable Locally)](#%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E5%AE%9F%E8%A1%8C%E5%8F%AF%E8%83%BD%E3%81%AB%E3%81%99%E3%82%8B-make-it-executable-locally)
+  - [STDOUT vs STDERR](#stdout-vs-stderr)
+- [命名規則 (Naming Conventions)](#%E5%91%BD%E5%90%8D%E8%A6%8F%E5%89%87-naming-conventions)
+  - [関数名 (Function Names)](#%E9%96%A2%E6%95%B0%E5%90%8D-function-names)
+  - [変数名 (Variable Names)](#%E5%A4%89%E6%95%B0%E5%90%8D-variable-names)
+- [コメント (Comments)](#%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88-comments)
+  - [ファイルヘッダー (File Header)](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%83%98%E3%83%83%E3%83%80%E3%83%BC-file-header)
+  - [コメントの実装 (Implementation Comments)](#%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88%E3%81%AE%E5%AE%9F%E8%A3%85-implementation-comments)
+  - [TODO コメント (TODO Comments)](#todo-%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88-todo-comments)
+- [フォーマット (Formatting)](#%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88-formatting)
+  - [タブとスペース (Tabs and Spaces)](#%E3%82%BF%E3%83%96%E3%81%A8%E3%82%B9%E3%83%9A%E3%83%BC%E3%82%B9-tabs-and-spaces)
+  - [行の長さと長い文字列 (Line Length and Long Strings)](#%E8%A1%8C%E3%81%AE%E9%95%B7%E3%81%95%E3%81%A8%E9%95%B7%E3%81%84%E6%96%87%E5%AD%97%E5%88%97-line-length-and-long-strings)
+  - [パイプライン (Pipelines)](#%E3%83%91%E3%82%A4%E3%83%97%E3%83%A9%E3%82%A4%E3%83%B3-pipelines)
+  - [ループ (Loops)](#%E3%83%AB%E3%83%BC%E3%83%97-loops)
+  - [case文 (Case statement)](#case%E6%96%87-case-statement)
+  - [変数展開 (Variable expansion)](#%E5%A4%89%E6%95%B0%E5%B1%95%E9%96%8B-variable-expansion)
+  - [クォート (Quoting)](#%E3%82%AF%E3%82%A9%E3%83%BC%E3%83%88-quoting)
+  - [関数の宣言 (Function Declaration)](#%E9%96%A2%E6%95%B0%E3%81%AE%E5%AE%A3%E8%A8%80-function-declaration)
+- [機能とバグ (Features and Bugs)](#%E6%A9%9F%E8%83%BD%E3%81%A8%E3%83%90%E3%82%B0-features-and-bugs)
+  - [ShellCheckを使う (Use ShellCheck)](#shellcheck%E3%82%92%E4%BD%BF%E3%81%86-use-shellcheck)
+  - [コマンド置換 (Command Substitution)](#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E7%BD%AE%E6%8F%9B-command-substitution)
+  - [Test構文 (Test Expression)](#test%E6%A7%8B%E6%96%87-test-expression)
+  - [文字列のテスト (Testing Strings)](#%E6%96%87%E5%AD%97%E5%88%97%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88-testing-strings)
+  - [ファイル名のワイルドカード展開 (Wildcard Expansion of Filenames)](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D%E3%81%AE%E3%83%AF%E3%82%A4%E3%83%AB%E3%83%89%E3%82%AB%E3%83%BC%E3%83%89%E5%B1%95%E9%96%8B-wildcard-expansion-of-filenames)
+  - [Evalの禁止 (Eval is Evil)](#eval%E3%81%AE%E7%A6%81%E6%AD%A2-eval-is-evil)
+  - [配列 (Arrays)](#%E9%85%8D%E5%88%97-arrays)
+  - [whileへのパイプ (Pipes to While)](#while%E3%81%B8%E3%81%AE%E3%83%91%E3%82%A4%E3%83%97-pipes-to-while)
+  - [forループ (For Loops)](#for%E3%83%AB%E3%83%BC%E3%83%97-for-loops)
+  - [算術演算 (Arithmetic)](#%E7%AE%97%E8%A1%93%E6%BC%94%E7%AE%97-arithmetic)
+- [コマンド呼び出し (Calling Commands)](#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%97-calling-commands)
+  - [返り値判定 (Checking Return Values)](#%E8%BF%94%E3%82%8A%E5%80%A4%E5%88%A4%E5%AE%9A-checking-return-values)
+  - [エラー処理 (Error Handling)](#%E3%82%A8%E3%83%A9%E3%83%BC%E5%87%A6%E7%90%86-error-handling)
+  - [ビルトインコマンド vs 外部コマンド (Builtin Commands vs. External Commands)](#%E3%83%93%E3%83%AB%E3%83%88%E3%82%A4%E3%83%B3%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89-vs-%E5%A4%96%E9%83%A8%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89-builtin-commands-vs-external-commands)
+- [スクリプトの安定化 (Script Stabilization)](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AE%E5%AE%89%E5%AE%9A%E5%8C%96-script-stabilization)
+  - [再実行可能なスクリプトを書く (Writing Rerunnable Scripts)](#%E5%86%8D%E5%AE%9F%E8%A1%8C%E5%8F%AF%E8%83%BD%E3%81%AA%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%82%92%E6%9B%B8%E3%81%8F-writing-rerunnable-scripts)
+  - [変更前に状態の確認を行う (Check State Before Changing)](#%E5%A4%89%E6%9B%B4%E5%89%8D%E3%81%AB%E7%8A%B6%E6%85%8B%E3%81%AE%E7%A2%BA%E8%AA%8D%E3%82%92%E8%A1%8C%E3%81%86-check-state-before-changing)
+  - [一時ファイルの安全な作成 (Safely Creating Temporary Files)](#%E4%B8%80%E6%99%82%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%AE%89%E5%85%A8%E3%81%AA%E4%BD%9C%E6%88%90-safely-creating-temporary-files)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # はじめに (Introduction)
 
