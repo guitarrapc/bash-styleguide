@@ -76,7 +76,7 @@ The following symbols are used:
 | Symbol | Meaning |
 | --- | --- |
 | ✔️ DO | Recommended. |
-| ❌ DO NOT | Not recommended. Make an effort to avoid it. |
+| ❌ AVOID | Not recommended. Make an effort to avoid it. |
 | ⚠️ CONSIDER | Consider if possible. It may be applied depending on the situation. |
 
 ## Automation Support
@@ -216,8 +216,8 @@ functions.sh
 > **Note** Custom rule (based on Google Shell Style Guide)
 
 * ✔️ DO: Use `sudo` if you need to elevate privileges
-* ❌ DO NOT: SUID and SGID are prohibited
-* ❌ DO NOT: `sudo` is also prohibited in GitHub Actions scripts. (custom)
+* ❌ AVOID: SUID and SGID are prohibited
+* ❌ AVOID: `sudo` is also prohibited in GitHub Actions scripts. (custom)
 
 SUID and SGID are prohibited in shell scripts. Shell has many security issues, making it nearly impossible to ensure sufficient safety to allow SUID/SGID. Although bash makes SUID execution difficult, it is possible on some platforms, so it is explicitly prohibited. If privilege escalation is needed, use `sudo`.
 
@@ -244,7 +244,7 @@ sudo ./foo.sh
 
 * ✔️ DO: Invoke scripts through `bash`
 * ✔️ DO: Enclose script arguments in quotes. However, if there is no possibility of spaces, such as in fixed strings, quotes can be omitted
-* ❌ DO NOT: Do not execute scripts directly
+* ❌ AVOID: Do not execute scripts directly
 
 Avoid executing scripts directly. By invoking scripts through `bash`, you ensure a consistent execution environment and prevent the current interactive shell from exiting due to an exit command.
 
@@ -305,8 +305,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/_functions"
 * ✔️ DO: Accept script arguments in the form of `--parameter-name value`. Use understandable names for parameter names
 * ✔️ DO: If using optional arguments that do not require specification, initialize them with local variables using `${_variable_name:=default_value}`
 * ⚠️ CONSIDER: Avoid accepting `--parameter-name` alone; however, it is permissible in some situations, in which case use `shift` instead of `shift 2`
-* ❌ DO NOT: Do not accept script arguments without parameter specification, such as `value1 value2 value3`
-* ❌ DO NOT: Avoid using single-letter argument names like `--f` or abbreviated names like `--ns`
+* ❌ AVOID: Do not accept script arguments without parameter specification, such as `value1 value2 value3`
+* ❌ AVOID: Avoid using single-letter argument names like `--f` or abbreviated names like `--ns`
 
 Control script arguments by looping through them with a while loop, using a case statement for evaluation, and shifting the arguments as they are parsed. When receiving script arguments, use `_UPPERCASE` for variables to distinguish them from local variables and constants. Ensure that script arguments are initialized before entering the main processing, and display them in logs to facilitate debugging.
 
@@ -461,7 +461,7 @@ az webapp up ...
 > **Note** Custom rule
 
 * ✔️ DO: Make scripts executable in the local environment
-* ❌ DO NOT: Avoid requiring users to have knowledge of the CLI used in the script
+* ❌ AVOID: Avoid requiring users to have knowledge of the CLI used in the script
 
 Making scripts executable in the local environment facilitates script development and makes it easier to verify their operation. Providing options such as AWS arguments and dry-run mode is useful for making scripts executable. However, if authentication can be handled with a prior login session, such as with `az login`, this consideration is unnecessary.
 
@@ -513,7 +513,7 @@ aws rds describe-db-clusters
 > **Note** Custom rule (based on Google Shell Style Guide)
 
 * ✔️ DO: Output error messages to STDERR
-* ❌ DO NOT: Do not output error messages to STDOUT
+* ❌ AVOID: Do not output error messages to STDOUT
 
 By outputting error messages to `STDERR`, it becomes easier to distinguish between normal output and actual issues. Instead of defining custom functions for error messages in scripts, use the common function `common::error`.
 
@@ -550,7 +550,7 @@ fi
 * ✔️ DO: Use lowercase letters and underscores to separate words
 * ✔️ DO: Separate package and function names with `::` in common scripts
 * ✔️ DO: Prefix functions used only within common scripts with `__`. (custom)
-* ❌ DO NOT: Do not use parentheses `()` after function names. (custom)
+* ❌ AVOID: Do not use parentheses `()` after function names. (custom)
 
 For single functions, use lowercase letters and underscores to separate words. For common functions, separate package names and function names with `::`.
 Braces should be written on the same line as the function name. While the `function` keyword is not mandatory if parentheses `()` are used after the function name, use `function` to explicitly indicate it is a function, and do not use `()`.
@@ -739,7 +739,7 @@ Comment on parts of the code that are tricky, not immediately obvious, interesti
 > **Note** Custom rule (based on Google Shell Style Guide)
 
 * ✔️ DO: Consider using TODO comments
-* ❌ DO NOT: Do not include the name of the person who wrote the TODO comment. (custom)
+* ❌ AVOID: Do not include the name of the person who wrote the TODO comment. (custom)
 
 Use TODO comments for temporary, short-term solutions, or code that is good enough but not perfect. TODO comments should include the uppercase string `TODO`. There is no need to include the individual's name, as it can be identified using `git blame`. The purpose of TODO comments is to provide a searchable and consistent `TODO` marker that can be looked up for more details as needed. Since the person referenced in the TODO is not necessarily committed to fixing the issue, it is helpful to include the expected resolution.
 
@@ -763,7 +763,7 @@ When editing existing files, follow the existing style, but apply the following 
 * ✔️ DO: Include blank lines between blocks for readability
 * ✔️ DO: Do not include trailing spaces. (custom)
 * ✔️ DO: Add a newline at the end of the file. (custom)
-* ❌ DO NOT: Do not force the style on existing files. Maintain the style of existing files
+* ❌ AVOID: Do not force the style on existing files. Maintain the style of existing files
 
 EditorConfig will automatically fix indentation, trailing spaces, and newlines at the end of files. Indentation should be two spaces. Under no circumstances should tabs be used.
 
@@ -917,7 +917,7 @@ For simple commands, place the pattern and `;;` on the same line if readability 
 
 * ✔️ DO: Use consistent variable expansion
 * ✔️ DO: Enclose variable expansions in double quotes. Single quotes do not expand variables
-* ❌ DO NOT: Avoid bracing shell special variables/positional parameters unless explicitly necessary or to avoid serious confusion
+* ❌ AVOID: Avoid bracing shell special variables/positional parameters unless explicitly necessary or to avoid serious confusion
 
 Variables should be quoted. Use `${var}` instead of `$var`.
 This is a strongly recommended guideline but not an absolute regulation. However, even though it is not mandatory, do not disregard it.
@@ -967,7 +967,7 @@ echo "$10$20$30"
 * ✔️ DO: Use arrays to safely quote multiple elements, especially for command line flags. See [Arrays](#配列-arrays) below
 * ✔️ DO: Quoting shell internal read-only special variables defined as integers is optional: `$?`, `$#`, `$$`, `$!` (see `man bash`). For consistency, quote internal integer variables like "${PPID}"
 * ✔️ DO: Quote string variables like `("${words}")`
-* ❌ DO NOT: Do not quote integer literals. Do not quote arithmetic expressions like `$((2 + 2))`
+* ❌ AVOID: Do not quote integer literals. Do not quote arithmetic expressions like `$((2 + 2))`
 * ⚠️ CONSIDER: Pay attention to quoting rules for pattern matching within `[[...]]`. See [Test](#test) below
 * ⚠️ CONSIDER: Use `"$@"` instead of `$*` unless you have a specific reason to concatenate arguments into a string or log message
 
@@ -1046,7 +1046,7 @@ grep -cP '([Ss]pecial|\|?characters*)$' ${1:+"$1"}
 
 > **Note** Google Shell Style Guide
 
-* ❌ DO NOT: Avoid writing executable code between function declarations
+* ❌ AVOID: Avoid writing executable code between function declarations
 
 Writing processing code between function declarations makes it difficult to track the code and can lead to unexpected issues during debugging. Place function declarations immediately after the constant declarations section.
 
@@ -1198,8 +1198,8 @@ fi
 * ⚠️ CONSIDER: Use `-z` instead of `== ""` for empty string comparisons
 * ⚠️ CONSIDER: Avoid prefixing/suffixing fixed strings for whole string comparison in string comparisons
 * ⚠️ CONSIDER: Be cautious when using `<` or `>` in string comparisons as they perform lexicographical comparisons
-* ❌ DO NOT: Do not use `=` for string comparisons
-* ❌ DO NOT: Do not use `>` or `<` for numeric comparisons
+* ❌ AVOID: Do not use `=` for string comparisons
+* ❌ AVOID: Do not use `>` or `<` for numeric comparisons
 
 Bash handles empty strings efficiently with test. For code readability, use appropriate string checks. Avoid prefixing/suffixing fixed strings for whole string comparison in string comparisons.
 
@@ -1291,7 +1291,7 @@ fi
 > **Note** Google Shell Style Guide
 
 * ✔️ DO: Use explicit paths when performing wildcard expansion of filenames
-* ❌ DO NOT: Do not use `*` for wildcard expansion of filenames. Instead, use `./*`
+* ❌ AVOID: Do not use `*` for wildcard expansion of filenames. Instead, use `./*`
 
 Filenames may start with `-`, so using `./*` for wildcard expansion is safer than using `*`.
 
@@ -1324,7 +1324,7 @@ removed `somefile'
 
 > **Note** Google Shell Style Guide
 
-* ❌ DO NOT: Do not use `eval`
+* ❌ AVOID: Do not use `eval`
 
 `eval` obscures input code when used for variable assignments, setting variables without allowing confirmation of what they are. `eval` poses a security risk and should be avoided.
 
@@ -1345,7 +1345,7 @@ variable="$(eval some_function)"
 
 * ✔️ DO: Use arrays to store multiple elements
 * ✔️ DO: Consider using loops for newline-separated string output. It's simpler than converting to an array
-* ❌ DO NOT: Avoid storing multiple elements in a single string
+* ❌ AVOID: Avoid storing multiple elements in a single string
 
 Bash arrays are used to store lists of elements, avoiding the complexity of quoting. Arrays should not be used to facilitate more complex data structures. (See [いつシェルを使うか (When to use Shell)](#いつシェルを使うか-when-to-use-shell) above.)
 
@@ -1410,7 +1410,7 @@ Arrays are used when safely creating or passing lists, especially to avoid issue
 > **Note** Google Style Guide
 
 * ✔️ DO: Use process substitution or the `readarray` builtin (bash4+) to pipe into `while`
-* ❌ DO NOT: Avoid piping into `while` using `|` as it may lead to hard-to-trace bugs
+* ❌ AVOID: Avoid piping into `while` using `|` as it may lead to hard-to-trace bugs
 
 When piping into `while`, prioritize using process substitution or the `readarray` builtin (bash4+). Process substitution creates a subshell but allows redirection to `while` without placing `while` or other commands inside the subshell. On the other hand, piping creates a subshell, and variable changes within the pipeline do not propagate to the parent shell, potentially leading to obscure bugs that are difficult to track.
 
@@ -1511,7 +1511,7 @@ done
 > **Note** Google Style Guide
 
 * ✔️ DO: Use `(( ... ))` or `$(( ... ))` for arithmetic operations
-* ❌ DO NOT: Avoid using `$[]` syntax, `let`, or `expr` for arithmetic operations
+* ❌ AVOID: Avoid using `$[]` syntax, `let`, or `expr` for arithmetic operations
 * ⚠️ CONSIDER: Avoid using `(( ... ))` as a standalone statement. Instead, use it in conditional expressions like `if (( ... ))`
 * ⚠️ CONSIDER: Inside `(( ... ))` or `$(( ... ))`, you can omit the `$` or `${}` when referring to variables, e.g., `i` instead of `$i`
 
@@ -1592,7 +1592,7 @@ echo "$(( hr * 3600 + min * 60 + sec ))" # prints 7530 as expected
 
 * ✔️ DO: Always check return values and provide useful return values
 * ✔️ DO: When handling command success or failure, directly check with `if` statements
-* ❌ DO NOT: Avoid checking return values with `$?` or `PIPESTATUS` variables, as `set -euo pipefail` is assumed
+* ❌ AVOID: Avoid checking return values with `$?` or `PIPESTATUS` variables, as `set -euo pipefail` is assumed
 
 **Recommended**
 
@@ -1664,7 +1664,7 @@ _my_def() {
 > **Note** Google Style Guide
 
 * ✔️ DO: Choose builtins over external commands when given the choice between a shell builtin call and an external process call
-* ❌ DO NOT: Avoid sticking to builtins if using external commands like `sed` simplifies the task despite complex variable expansions in bash
+* ❌ AVOID: Avoid sticking to builtins if using external commands like `sed` simplifies the task despite complex variable expansions in bash
 
 Shell builtins are generally more robust and portable compared to external commands (e.g., `sed` varies between BSD and GNU), so using builtins like those in bash (e.g., variable expansions) is appropriate. However, if using external commands is simpler and more standard, there is no need to stick to builtins. Overly complex variable expansions can make the code harder for others to understand.
 
