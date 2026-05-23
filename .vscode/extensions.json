@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "editorconfig.editorconfig",
-    "timonwong.shellcheck",
-    "taichi.vscode-textlint"
+    "timonwong.shellcheck"
   ]
 }
